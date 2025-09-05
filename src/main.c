@@ -3,10 +3,10 @@
 #include <stdbool.h>
 #include <stdint.h>
 
-#include "game.h"
-#include "utils.h"
-#include "keyboard.h"
-#include "player.h"
+#include "../include/game.h"
+#include "../include/utils.h"
+#include "../include/keyboard.h"
+#include "../include/player.h"
 
 
 
@@ -27,7 +27,7 @@ int main(int argument_counter, char **arguments) {
     //INIT WORLD AND PLAYER
     player_t player;
     init_player(&player, (vec2_t){30, 30}, (vec2_t){500, 300}, PLAYER_COLOR);
-    world_tilemap_t *world_tilemap = create_world_tilemap(world_tiles, 16, 16, 60);
+    world_tilemap_t *world_tilemap = create_world_tilemap(world_tiles, 16, 16, 40);
 
     
     while (game_inst->running) {

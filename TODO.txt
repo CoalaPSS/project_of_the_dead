@@ -1,0 +1,26 @@
+THINGS TO IMPLEMENT:
+
+- Collision detection:
+    Implement an basic collision detection system.
+    Doesn't need to be super precise, but functional.
+    Try make a very modular system, separeted from the others parts of the game.
+    That way, it's possible to rewrite it later.
+
+- Game assets:
+    It's time to make the game look like a game, implement an assets system. 
+    Look for the best way to organize 'game logic' with 'game data'.
+
+- Event system: 
+    Featuring various key presses, mouse clicks/mouse coordinates.
+    Event queue, handling more than one event per frame.
+    Polished keyboard input.
+
+- Entity System:
+    Don't know how to architect this yet, but something like this:
+    Try to unify entities, all interactable-world-objects.
+    Store entities in an array, and render all entities at once.
+----------------------------------------------------------------------------
+
+THINGS TO FIX:
+
+...

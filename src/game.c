@@ -1,4 +1,4 @@
-#include "game.h"
+#include "../include/game.h"
 
 void init_clock(u32 fps, clock_t *new_clock) {
     new_clock->target_dt = (1000/fps);
