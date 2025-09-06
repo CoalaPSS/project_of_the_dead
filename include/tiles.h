@@ -1,8 +1,8 @@
-#ifndef TILES_H
-#define TILES_H
+#pragma once
 
 #include <stdio.h>
 #include <stdlib.h>
+#include "types.h"
 #include "utils.h"
 
 #define FLOOR_COLOR (color_t){125, 115, 75}
@@ -35,5 +35,3 @@ typedef struct _world_tilemap {
 world_tilemap_t *create_world_tilemap(const u8 *tile_coordinates, int w, int h, int tile_size);
 const tile_t *load_world_map_file(char *map_file);
 void print_tilemap(world_tilemap_t *tilemap);
-
-#endif

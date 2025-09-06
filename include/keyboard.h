@@ -1,5 +1,4 @@
-#ifndef KEYBOARD_H
-#define KEYBOARD_H
+#pragma once
 
 #include <SDL2/SDL.h>
 #include <stdbool.h>
@@ -21,4 +20,3 @@ void init_key_states(key_states_t *keys);
 void handle_key_press(SDL_Scancode key_scancode, key_states_t *key_states, bool state);
 void print_key_states(key_states_t key_states);
 
-#endif

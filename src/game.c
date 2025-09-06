@@ -2,7 +2,7 @@
 
 void init_clock(u32 fps, clock_t *new_clock) {
     new_clock->target_dt = (1000/fps);
-    new_clock->dt = ((double)1/(double)fps); 
+    new_clock->dt = ((f32)1/(f32)fps); 
 
     new_clock->frame_start = 0;
     new_clock->frame_duration = 0;
@@ -47,8 +47,8 @@ void process_key_presses(key_states_t *key_states, player_t *player, bool debug_
     }
 }
 
-void update_player_movement(player_t *player, double delta_time) {
-    double df = 0.0;
+void update_player_movement(player_t *player, f32 delta_time) {
+    f32 df = 0.0;
     if (player->velocity.x && player->velocity.y) df = 0.7;
 
     printf("Player velocity: (%lf, %lf) | dt: %lf\n", (player->velocity.x * delta_time), (player->velocity.y*delta_time), delta_time);

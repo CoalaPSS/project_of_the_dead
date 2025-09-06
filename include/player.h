@@ -1,6 +1,6 @@
-#ifndef PLAYER_H
-#define PLAYER_H
+#pragma once
 
+#include "types.h"
 #include "utils.h"
 #include <SDL2/SDL.h>
 
@@ -16,5 +16,3 @@ typedef struct _player {
 } player_t;
 
 void init_player(player_t *player, vec2_t dimensions, vec2_t init_position, color_t color);
-
-#endif
