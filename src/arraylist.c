@@ -68,31 +68,3 @@ void dbg_print_array_list(array_list_t *list) {
         printf("%d\n", *(list_ptr++));   
     }
 }
-
-void main() {
-    array_list_t *my_list = array_list_create(sizeof(int), 32);
-
-    int item;
-    
-    item = 10;
-    array_list_append(my_list, &item);
-
-    item = 20;
-    array_list_append(my_list, &item);
-
-    item = 30;
-    array_list_append(my_list, &item);
-
-    item = 15;
-    array_list_append(my_list, &item);
-
-    item = 6;
-    array_list_append(my_list, &item);
-
-    item = 255;
-    array_list_append(my_list, &item);
-
-    int *result = array_list_get(my_list, 3);
-    
-    printf("Item get: %d\n", *result);
-}

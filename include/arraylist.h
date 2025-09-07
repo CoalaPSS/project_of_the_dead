@@ -5,7 +5,8 @@
 #include "utils.h"
 #include "types.h"
 
-#define ARRAYLIST_MAX_CAPACITY 4194304 //4 MIB
+#define MAX_CAPACITY 4194304 //4 MIB
+#define DEFAULT_INITIAL_CAPACITY 1024
 
 typedef struct _array_list {
     usize lenght;

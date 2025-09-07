@@ -1,25 +1,6 @@
 #include "../include/game.h"
 
-void init_clock(u32 fps, clock_t *new_clock) {
-    new_clock->target_dt = (1000/fps);
-    new_clock->dt = ((f32)1/(f32)fps); 
 
-    new_clock->frame_start = 0;
-    new_clock->frame_duration = 0;
-    new_clock->last_frame_time = 0;
-}
-
-void get_tick(clock_t *clock) {
-    clock->frame_start = SDL_GetTicks();
-}
-
-void enforce_frame_time(clock_t *clock) {
-    clock->frame_duration = SDL_GetTicks() - clock->frame_start;
- 
-    if (clock->target_dt > clock->frame_duration) {
-        SDL_Delay(clock->target_dt - clock->frame_duration);
-    }
-}
 
 void process_key_presses(key_states_t *key_states, player_t *player, bool debug_flag) {
     player->velocity.x = 0;
@@ -50,8 +31,7 @@ void process_key_presses(key_states_t *key_states, player_t *player, bool debug_
 void update_player_movement(player_t *player, f32 delta_time) {
     f32 df = 0.0;
     if (player->velocity.x && player->velocity.y) df = 0.7;
-
-    printf("Player velocity: (%lf, %lf) | dt: %lf\n", (player->velocity.x * delta_time), (player->velocity.y*delta_time), delta_time);
+    
     player->position.x += player->velocity.x * delta_time;
     player->position.y += player->velocity.y * delta_time;
 }
@@ -83,44 +63,44 @@ void draw_player(player_t *player, SDL_Renderer *renderer) {
     SDL_RenderFillRect(renderer, &p_rect);
 }
 
-void draw_tiles(world_tilemap_t *tilemap, SDL_Renderer *renderer) {
-    int x, y, id;
-    color_t dc;
-    tile_t temp_tile;
-    SDL_Rect tile_rect = {.w = tilemap->tile_size, .h = tilemap->tile_size};
+// void draw_tiles(world_tilemap_t *tilemap, SDL_Renderer *renderer) {
+//     int x, y, id;
+//     color_t dc;
+//     tile_t temp_tile;
+//     SDL_Rect tile_rect = {.w = tilemap->tile_size, .h = tilemap->tile_size};
 
-    for (y = 0; y < tilemap->height; y++) {
-        for (x = 0; x < tilemap->height; x++) {
-            id = (y * tilemap->width) + x;
-            temp_tile = tilemap->tiles[id];
+//     for (y = 0; y < tilemap->height; y++) {
+//         for (x = 0; x < tilemap->height; x++) {
+//             id = (y * tilemap->width) + x;
+//             temp_tile = tilemap->tiles[id];
 
-            tile_rect.x = temp_tile.x;
-            tile_rect.y = temp_tile.y;
+//             tile_rect.x = temp_tile.x;
+//             tile_rect.y = temp_tile.y;
 
-            switch (temp_tile.type) {
-                case FLOOR:
-                    dc = FLOOR_COLOR;
-                    break;
-                case WALL:
-                    dc = WALL_COLOR;
-                    break;
-                case BOX:
-                    dc = BOX_COLOR;
-                    break;
-                default:
-                    dc = DEFAULT_COLOR;
-            }
+//             switch (temp_tile.type) {
+//                 case FLOOR:
+//                     dc = FLOOR_COLOR;
+//                     break;
+//                 case WALL:
+//                     dc = WALL_COLOR;
+//                     break;
+//                 case BOX:
+//                     dc = BOX_COLOR;
+//                     break;
+//                 default:
+//                     dc = DEFAULT_COLOR;
+//             }
 
-            SDL_SetRenderDrawColor(renderer, dc.r, dc.g, dc.b, dc.a);
-            SDL_RenderFillRect(renderer, &tile_rect);
-        }
-    }
-}
+//             SDL_SetRenderDrawColor(renderer, dc.r, dc.g, dc.b, dc.a);
+//             SDL_RenderFillRect(renderer, &tile_rect);
+//         }
+//     }
+// }
 
-core_game_t *init_game(const int sw, const int sh, const int fps) {
+game_state_t *init_game(const int sw, const int sh, const int fps) {
     SDL_Init(SDL_INIT_VIDEO);
 
-    core_game_t *game_instance = (core_game_t *)malloc(sizeof(core_game_t));
+    game_state_t *game_instance = (game_state_t *)malloc(sizeof(game_state_t));
 
     game_instance->window = SDL_CreateWindow("ProtGame-Z", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, sw, sh, SDL_WINDOW_SHOWN);
     game_instance->renderer = SDL_CreateRenderer(game_instance->window, -1, SDL_RENDERER_ACCELERATED);
