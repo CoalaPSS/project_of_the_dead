@@ -18,6 +18,4 @@ $(TARGET): $(OBJ)
 run: $(TARGET)
 	./$(TARGET)
 
-# Individuais
-array_list:
-	gcc src/arraylist.c src/utils.c -o bin/list_test.exe
+

@@ -45,7 +45,7 @@ typedef struct _world_objects {
 } world_objects_t;
 
 void init_tile_color_table(color_t *table);
-world_objects_t *init_world_objects(const u8 *floor_tiles, const u8 *wall_tiles, int width, int height, i32 tile_size);
+world_objects_t *init_world_objects(physics_state_t *physics_state, const u8 *floor_tiles, const u8 *wall_tiles, int width, int height, i32 tile_size);
 
 
 void print_object(static_object_t *obj);

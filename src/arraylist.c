@@ -1,7 +1,5 @@
 #include "../include/arraylist.h"
 
-
-
 array_list_t *array_list_create(usize item_size, usize initial_capacity) {
     array_list_t *list = (array_list_t*)malloc(sizeof(array_list_t));
 
@@ -26,7 +24,6 @@ usize array_list_append(array_list_t *list, void *item) {
     }
 
     usize index = list->lenght++;
-
     memcpy(((u8*)list->items + (list->item_size * index)), item, list->item_size);
 }
 
@@ -58,13 +55,14 @@ u8 array_list_remove(array_list_t *list, usize index) {
     return 0;
 }
 
-void dbg_print_array_list(array_list_t *list) {
+void dbg_print_array_list(array_list_t *list, void (*print_func)(void *)) {
     u8 *list_ptr = (u8*)list->items;
 
-    int list_byte_len = (list->item_size * list->lenght) / sizeof(u8);
+    u8 item_bytes[list->item_size]; 
 
-    printf("BYTE ARRAY:\n");
-    for (int i = 0; i < list_byte_len; i++) {
-        printf("%d\n", *(list_ptr++));   
+    for (int i = 0; i < list->lenght; i++) {
+        memcpy(item_bytes, list_ptr, list->item_size);
+        print_func(item_bytes);
+        list_ptr += list->item_size;
     }
 }

@@ -1,6 +1,8 @@
 {
     "files.associations": {
         "types.h": "c",
-        "world_objects.h": "c"
+        "world_objects.h": "c",
+        "game.h": "c",
+        "player.h": "c"
     }
 }

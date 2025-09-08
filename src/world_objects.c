@@ -49,13 +49,13 @@ void init_tile_color_table(color_t *table) {
     table[TILE_COLOR_YELLOW_WALL] = (color_t){255,255,0};
 }
 
-world_objects_t *init_world_objects(const u8 *floor_tiles, const u8 *wall_tiles, int width, int height, i32 tile_size) {
+world_objects_t *init_world_objects(physics_state_t *physics_state, const u8 *floor_tiles, const u8 *wall_tiles, int width, int height, i32 tile_size) {
     world_objects_t *world_objs = (world_objects_t*)malloc(sizeof(world_objects_t));
-
+    
     world_objs->floors = array_list_create(sizeof(static_object_t), DEFAULT_INITIAL_CAPACITY);
 
     world_objs->walls = array_list_create(sizeof(static_object_t), DEFAULT_INITIAL_CAPACITY);
-
+    
     int x, y, index;
 
     f32 hs = (f32)tile_size/2.0;
@@ -74,8 +74,9 @@ world_objects_t *init_world_objects(const u8 *floor_tiles, const u8 *wall_tiles,
 
             if (tile.color_id > 0){
                 array_list_append(world_objs->walls, &tile);
+                physics_add_static_body(physics_state, tile.aabb);
             }
-                
+            
         }   
     }
     // ERROR_RETURN(1, "Debug exit");

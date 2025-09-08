@@ -6,8 +6,8 @@
 #include "../include/game.h"
 #include "../include/utils.h"
 #include "../include/keyboard.h"
-#include "../include/player.h"
 #include "../include/renderer.h"
+#include "../include/physics.h"
 
 
 #define SCREEN_WIDTH 1920
@@ -22,15 +22,19 @@ int main(int argument_counter, char **arguments) {
     game_state_t *state = init_game(SCREEN_WIDTH, SCREEN_HEIGHT, 60);
     SDL_Event event;
 
-    //INIT WORLD AND PLAYER
-    init_tile_color_table(tile_color_table);
-    state->world_objects = init_world_objects(floors, walls, MAP_WIDTH, MAP_HEIGTH, TILE_SIZE);
-
-    player_t player;
-    init_player(&player, (vec2_t){30, 30}, (vec2_t){500, 300}, PLAYER_COLOR);
-    // world_tilemap_t *world_tilemap = create_world_tilemap(world_tiles, 16, 16, 40);
-
+    //INIT GAME
     
+    
+    
+    state->physics_state = init_physics_state(NULL, NULL);
+    
+    state->world_objects = init_world_objects(state->physics_state, floors, walls, MAP_WIDTH, MAP_HEIGTH, TILE_SIZE);
+    
+    state->player = create_player(40, 300.0, 300.0, TILE_COLOR_YELLOW_WALL);
+
+    physics_add_body(state->physics_state, &(state->player->body));
+    dbg_print_physics_state(state->physics_state);
+
     while (state->running) {
         get_tick(state->clock);
 
@@ -50,12 +54,12 @@ int main(int argument_counter, char **arguments) {
                 // printf("Unknown event type.\n");
         }
 
-        process_key_presses(state->key_states, &player, 0);
-        update_player_movement(&player, state->clock->dt);
+        process_key_presses(state->key_states, state->player, 0);
+        update_player_movement(state->player, state->clock->dt);
         
         clear_render(state->renderer, BACKGROUND_COLOR);
         render_world_objects(state->renderer, state->world_objects);
-        draw_player(&player, state->renderer);
+        t_render_player(state->player, state->renderer);
         SDL_RenderPresent(state->renderer);
 
         //ENFORCE FRAME RATE
