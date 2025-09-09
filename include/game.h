@@ -29,7 +29,6 @@ typedef struct _game {
 
     physics_state_t *physics_state;
     tilemap_t *tilemap;
-    player_t *player;
 } game_state_t;
 
 

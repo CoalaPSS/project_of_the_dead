@@ -2,15 +2,14 @@
 
 void dbg_print_body(void *data);
 
-physics_state_t *init_physics_state(collision_cb_func col_cb, static_collision_cb_func static_col_cb) { 
+physics_state_t *init_physics_state(body_collision_cb_func body_cb, tile_collision_cb_func tile_cb) { 
     physics_state_t *state = (physics_state_t*)malloc(sizeof(physics_state_t));
 
-    state->collision_callback = col_cb;
-    state->static_collision_callback = static_col_cb;
+    state->body_collision_callback = body_cb;
+    state->tile_collision_callback = tile_cb;
 
-    state->static_body_list = array_list_create(sizeof(static_body_t), DEFAULT_INITIAL_CAPACITY);
     state->body_list = array_list_create(sizeof(body_t*), DEFAULT_INITIAL_CAPACITY);
-
+    state->tile_list = array_list_create(sizeof(aabb_t), DEFAULT_INITIAL_CAPACITY);
     return state;
 }
 
@@ -37,26 +36,26 @@ bool physics_aabb_aabb_intersect(aabb_t box_a, aabb_t box_b) {
 
 
 
-void physics_add_static_body(physics_state_t *state, static_body_t *s_body) {
-    array_list_append(state->static_body_list, s_body);
-}
 
 void physics_add_body(physics_state_t *state, body_t *body) {
     array_list_append(state->body_list, &body);
 }
 
 void physics_collision_update(physics_state_t *state, void *context) {
+    //Body x Tile collision
     for (int i = 0; i < state->body_list->lenght; i++) {
-        body_t *b = *(body_t**)array_list_get(state->body_list, i);
+        body_t *body = *(body_t**)array_list_get(state->body_list, i);
         
-        for (int j = 0; j < state->static_body_list->lenght; j++) {
-            static_body_t *sb = (static_body_t*)array_list_get(state->static_body_list, j);
 
-            if (physics_aabb_aabb_intersect(b->aabb, sb->aabb)) {
-                state->static_collision_callback(b, sb, context);
+        for (int j = 0; j < state->tile_list->lenght; j++) {
+            aabb_t tile_aabb = *(aabb_t*)array_list_get(state->tile_list, j);
+
+            if (physics_aabb_aabb_intersect(body->aabb, tile_aabb)) {
+                state->tile_collision_callback(body, &tile_aabb, context);
             }
         }
     }
+
 }
 
 void physics_update_entities(physics_state_t *state) {
@@ -75,14 +74,6 @@ void aabb_to_sdl_rect(aabb_t aabb, SDL_Rect *rect) {
     (*rect).h = size.y;
 }
 
-void dbg_print_static_body(void *data) {
-    static_body_t *body_data = (static_body_t*)data;
-    
-    printf("\nSTATIC BODY DATA:\n");
-    printf("Position: [%f, %f]\n", body_data->aabb.position.x, body_data->aabb.position.y);
-    printf("Half-Size: [%f, %f]\n\n", body_data->aabb.half_size.x, body_data->aabb.half_size.y);
-}
-
 void dbg_print_body(void *data) {
     body_t *body_data = (body_t*)data;
 
@@ -92,8 +83,6 @@ void dbg_print_body(void *data) {
 }
 
 void dbg_print_physics_state(physics_state_t *state) {
-    printf("Static Body List:\n");
-    dbg_print_array_list(state->static_body_list, dbg_print_static_body);
     printf("Body List:\n");
     dbg_print_array_list(state->body_list, dbg_print_body);
 }

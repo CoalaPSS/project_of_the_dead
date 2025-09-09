@@ -4,7 +4,7 @@
 // #include "player"
 #include "types.h"
 #include "arraylist.h"
-#include "tile_manager.h"
+#include "physics.h"
 
 #define COLOR_CHART_SIZE 255
 
@@ -14,9 +14,13 @@ enum COLOR_ID {
     COLOR_DARK_GRAY,
     COLOR_GRAY,
     COLOR_BLUE,
+    COLOR_GREEN,
+    COLOR_MOSS_GREEN,
     COLOR_DARK_GREEN,
     COLOR_RED,
-    COLOR_YELLOW
+    COLOR_YELLOW,
+    COLOR_WOOD_YELLOW,
+    COLOR_BROWN
 };
 
 extern color_t color_chart[];

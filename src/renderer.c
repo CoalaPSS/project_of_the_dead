@@ -7,9 +7,13 @@ void init_color_chart() {
     color_chart[COLOR_DARK_GRAY] = (color_t){40, 40, 40};
     color_chart[COLOR_GRAY] = (color_t){120, 120, 120};
     color_chart[COLOR_BLUE] = (color_t){51, 51, 255};
+    color_chart[COLOR_GREEN] = (color_t){0, 200, 0};
+    color_chart[COLOR_MOSS_GREEN] = (color_t){76, 150, 0};
     color_chart[COLOR_DARK_GREEN] = (color_t){51, 102, 0};
     color_chart[COLOR_RED] = (color_t){255, 0, 0};
+    color_chart[COLOR_WOOD_YELLOW] = (color_t){202, 158, 38};
     color_chart[COLOR_YELLOW] = (color_t){255, 255, 55};
+    color_chart[COLOR_BROWN] = (color_t){105, 55, 10};
 }
 
 color_t get_color(enum COLOR_ID color_id) {

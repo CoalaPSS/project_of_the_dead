@@ -1,7 +1,8 @@
 #include "../include/game.h"
 
 //Declarations
-void static_body_collision(body_t *b, static_body_t *sb, void *context);
+
+void tile_collision_callback(body_t *body, aabb_t *tile_aabb, void *context);
 
 game_state_t *init_game(const int sw, const int sh, const int fps) {
     SDL_Init(SDL_INIT_VIDEO);
@@ -13,7 +14,7 @@ game_state_t *init_game(const int sw, const int sh, const int fps) {
 
     game_instance->clock = init_clock(fps);
     game_instance->input = init_input_state();
-    game_instance->physics_state = init_physics_state(NULL, static_body_collision);
+    game_instance->physics_state = init_physics_state(NULL, tile_collision_callback);
 
     init_color_chart();
 
@@ -47,13 +48,12 @@ void process_key_presses(key_states_t *key_states, player_t *player, bool debug_
     }
 }
 
-void static_body_collision(body_t *b, static_body_t *sb, void *context) {
-    if (b->type_id == BT_PLAYER) {
-        SDL_Renderer *renderer = (SDL_Renderer*)context;
-
+void tile_collision_callback(body_t *body, aabb_t *tile_aabb, void *context) {
+    if (body->id == ID_PLAYER) {
         array_list_t *aabb_list = (array_list_t*)context;
-        array_list_append(aabb_list, &sb->aabb);
-        array_list_append(aabb_list, &b->aabb);
+        
+        array_list_append(aabb_list, &body->aabb);
+        array_list_append(aabb_list, tile_aabb);
     }
 }
 
@@ -64,7 +64,7 @@ player_t *create_player(u32 size, f32 x_pos, f32 y_pos, u8 color_id) {
     player->body.aabb.position = (vec2_t){.x = x_pos, .y = y_pos};
     player->body.velocity = (vec2_t){0};
     player->body.acceleration = (vec2_t){0};
-    player->body.type_id = BT_PLAYER;
+    player->body.id = ID_PLAYER;
     player->body.owner = player;
 
     player->color_id = color_id;
@@ -86,3 +86,5 @@ void t_render_player(player_t *player, SDL_Renderer *renderer) {
     set_render_color(renderer, get_color(player->color_id));
     SDL_RenderFillRect(renderer, &rect);
 }
+
+//Collisions responses

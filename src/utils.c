@@ -16,3 +16,7 @@ vec2_t vec2_div(vec2_t v, f32 factor) {
     return (vec2_t){.x = v.x/factor, .y = v.y/factor};
 }
 
+vec2_t vec2_from_int(u32 integer, f32 factor) {
+    f32 res = (f32)integer * factor;
+    return (vec2_t){res, res};
+}
