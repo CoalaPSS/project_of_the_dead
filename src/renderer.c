@@ -1,5 +1,21 @@
 #include "../include/renderer.h"
 
+color_t color_chart[COLOR_CHART_SIZE];
+
+void init_color_chart() {
+    color_chart[COLOR_BLACK] = (color_t){0, 0, 0};
+    color_chart[COLOR_DARK_GRAY] = (color_t){40, 40, 40};
+    color_chart[COLOR_GRAY] = (color_t){120, 120, 120};
+    color_chart[COLOR_BLUE] = (color_t){51, 51, 255};
+    color_chart[COLOR_DARK_GREEN] = (color_t){51, 102, 0};
+    color_chart[COLOR_RED] = (color_t){255, 0, 0};
+    color_chart[COLOR_YELLOW] = (color_t){255, 255, 55};
+}
+
+color_t get_color(enum COLOR_ID color_id) {
+    return color_chart[color_id];
+}
+
 void set_render_color(SDL_Renderer *renderer, color_t color) {
     SDL_SetRenderDrawColor(renderer, color.r, color.g, color.b, color.a);
 }
@@ -9,29 +25,22 @@ void clear_render(SDL_Renderer *renderer, color_t color) {
     SDL_RenderClear(renderer);
 }
 
-void render_world_objects(SDL_Renderer *renderer, world_objects_t *world_objs) {
-    vec2_t render_pos;
-    static_object_t *obj;
+void render_aabb(SDL_Renderer *renderer, aabb_t box, color_t color) {
     SDL_Rect rect;
 
-    //Draw floors
+    aabb_to_sdl_rect(box, &rect);
+    set_render_color(renderer, color);
+    SDL_RenderDrawRect(renderer, &rect);
+}
 
-    for (int i = 0; i < world_objs->floors->lenght; i++) {
-        obj = (static_object_t*)array_list_get(world_objs->floors, i);
-        // printf("FLOOR TILE %d:", i);
-        // print_object(obj);
-        aabb_to_sdl_rect(obj->aabb, &rect);
-        set_render_color(renderer, tile_color_table[obj->color_id]);
-        SDL_RenderFillRect(renderer, &rect);
-    }
+void render_quad(SDL_Renderer *renderer, vec2_t position, u32 size, u8 color_id) {
+    SDL_Rect rect = {
+        .x = position.x,
+        .y = position.y,
+        .w = size,
+        .h = size,
+    };
 
-    //Draw walls
-
-    for (int i = 0; i < world_objs->walls->lenght; i++) {
-        obj = (static_object_t*)array_list_get(world_objs->walls, i);        
-        aabb_to_sdl_rect(obj->aabb, &rect);
-        set_render_color(renderer, tile_color_table[obj->color_id]);
-        SDL_RenderDrawRect(renderer, &rect);
-    }
-    // ERROR_RETURN(1, "Debug exit");
+    set_render_color(renderer, get_color(color_id));
+    SDL_RenderDrawRect(renderer, &rect);
 }

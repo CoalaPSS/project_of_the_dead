@@ -1,5 +1,12 @@
 #include "../include/game.h"
 
+// void static_body_collision(body_t *b, static_body_t *sb) {
+//     if (b->type_id == BODY_TYPE_CURSOR) {
+//         cursor_box_t *cursor = (cursor_box_t*)(b->owner);
+//         cursor->color_id = TILE_COLOR_RED_WALL;
+//     }
+// }
+
 player_t *create_player(u32 size, f32 x_pos, f32 y_pos, u8 color_id) {
     player_t *player = (player_t*)malloc(sizeof(player_t));
 
@@ -10,7 +17,7 @@ player_t *create_player(u32 size, f32 x_pos, f32 y_pos, u8 color_id) {
     player->body.type_id = 0;
     player->body.owner = player;
 
-    player->temp_color = tile_color_table[color_id];
+    player->color_id = color_id;
 }
 
 void process_key_presses(key_states_t *key_states, player_t *player, bool debug_flag) {
@@ -52,7 +59,7 @@ void t_render_player(player_t *player, SDL_Renderer *renderer) {
 
     aabb_to_sdl_rect(player->body.aabb, &rect);
 
-    set_render_color(renderer, player->temp_color);
+    set_render_color(renderer, get_color(player->color_id));
     SDL_RenderFillRect(renderer, &rect);
 }
 
@@ -64,12 +71,11 @@ game_state_t *init_game(const int sw, const int sh, const int fps) {
     game_instance->window = SDL_CreateWindow("ProtGame-Z", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, sw, sh, SDL_WINDOW_SHOWN);
     game_instance->renderer = SDL_CreateRenderer(game_instance->window, -1, SDL_RENDERER_ACCELERATED);
 
-    game_instance->key_states = (key_states_t*)malloc(sizeof(key_states_t));
-    game_instance->clock = (clock_t*)malloc(sizeof(clock_t));
+    game_instance->clock = init_clock(fps);
+    game_instance->input = init_input_state();
+    game_instance->physics_state = init_physics_state(NULL, NULL);
 
-    init_clock(fps, game_instance->clock);
-    init_key_states(game_instance->key_states);
-    init_tile_color_table(tile_color_table);
+    init_color_chart();
 
     game_instance->running = true;
 }

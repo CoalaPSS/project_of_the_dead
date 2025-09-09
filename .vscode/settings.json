@@ -3,6 +3,7 @@
         "types.h": "c",
         "world_objects.h": "c",
         "game.h": "c",
-        "player.h": "c"
+        "player.h": "c",
+        "tile_manager.h": "c"
     }
 }

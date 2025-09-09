@@ -11,6 +11,6 @@ typedef struct _clock {
     f32 dt;
 } clock_t;
 
-void init_clock(u32 fps, clock_t *new_clock);
+clock_t *init_clock(u32 fps);
 void get_tick(clock_t *clock);
 void enforce_frame_time(clock_t *clock);
