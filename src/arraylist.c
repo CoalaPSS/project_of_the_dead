@@ -55,6 +55,10 @@ u8 array_list_remove(array_list_t *list, usize index) {
     return 0;
 }
 
+void array_list_clear(array_list_t *list) {
+    list->lenght = 0;
+}
+
 void dbg_print_array_list(array_list_t *list, void (*print_func)(void *)) {
     u8 *list_ptr = (u8*)list->items;
 

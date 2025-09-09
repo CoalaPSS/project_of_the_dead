@@ -27,6 +27,9 @@ int main(int argument_counter, char **arguments) {
     
     dbg_print_physics_state(state->physics_state);
 
+    array_list_t *aabb_render_list = array_list_create(sizeof(aabb_t), DEFAULT_INITIAL_CAPACITY);
+
+
     aabb_t test_aabb = {
         .position = (vec2_t){300, 300},
         .half_size = (vec2_t){50, 50}
@@ -60,20 +63,17 @@ int main(int argument_counter, char **arguments) {
         SDL_ShowCursor(SDL_DISABLE);
         process_key_presses(&state->input->keys, state->player, 0);
         update_player_movement(state->player, state->clock->dt);
-        physics_collision_update(state->physics_state);
+        physics_collision_update(state->physics_state, aabb_render_list);
 
         //Rendering
         clear_render(state->renderer, get_color(COLOR_DARK_GRAY));
-
-        if (physics_point_aabb_intersect(state->input->mouse.position, test_aabb)) {
-            render_aabb(state->renderer, test_aabb, get_color(COLOR_RED));
-        }
-        else {
-            render_aabb(state->renderer, test_aabb, get_color(COLOR_GRAY));
-        }
         render_quad(state->renderer, state->input->mouse.position, 10, COLOR_RED);
         render_tilemap(state->renderer, state->tilemap);
         t_render_player(state->player, state->renderer);
+        
+        render_aabb_list(state->renderer, aabb_render_list, COLOR_RED);
+        array_list_clear(aabb_render_list);
+
         SDL_RenderPresent(state->renderer);
 
         //ENFORCE FRAME RATE

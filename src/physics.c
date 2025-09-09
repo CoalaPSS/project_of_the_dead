@@ -2,11 +2,11 @@
 
 void dbg_print_body(void *data);
 
-physics_state_t *init_physics_state(void (*collision_cb_func)(body_t *self, body_t *other), void (*static_collision_cb_func)(body_t *self, static_body_t *static_body)) { 
+physics_state_t *init_physics_state(collision_cb_func col_cb, static_collision_cb_func static_col_cb) { 
     physics_state_t *state = (physics_state_t*)malloc(sizeof(physics_state_t));
 
-    state->body_collision_callback_func = collision_cb_func;
-    state->static_body_collision_callback_func = static_collision_cb_func;
+    state->collision_callback = col_cb;
+    state->static_collision_callback = static_col_cb;
 
     state->static_body_list = array_list_create(sizeof(static_body_t), DEFAULT_INITIAL_CAPACITY);
     state->body_list = array_list_create(sizeof(body_t*), DEFAULT_INITIAL_CAPACITY);
@@ -45,7 +45,7 @@ void physics_add_body(physics_state_t *state, body_t *body) {
     array_list_append(state->body_list, &body);
 }
 
-void physics_collision_update(physics_state_t *state) {
+void physics_collision_update(physics_state_t *state, void *context) {
     for (int i = 0; i < state->body_list->lenght; i++) {
         body_t *b = *(body_t**)array_list_get(state->body_list, i);
         
@@ -53,7 +53,7 @@ void physics_collision_update(physics_state_t *state) {
             static_body_t *sb = (static_body_t*)array_list_get(state->static_body_list, j);
 
             if (physics_aabb_aabb_intersect(b->aabb, sb->aabb)) {
-                printf("COLLISION!\n");
+                state->static_collision_callback(b, sb, context);
             }
         }
     }

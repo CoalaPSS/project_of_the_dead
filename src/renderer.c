@@ -25,12 +25,20 @@ void clear_render(SDL_Renderer *renderer, color_t color) {
     SDL_RenderClear(renderer);
 }
 
-void render_aabb(SDL_Renderer *renderer, aabb_t box, color_t color) {
+void render_aabb(SDL_Renderer *renderer, aabb_t box, u8 color_id) {
     SDL_Rect rect;
 
     aabb_to_sdl_rect(box, &rect);
-    set_render_color(renderer, color);
+    set_render_color(renderer, get_color(color_id));
     SDL_RenderDrawRect(renderer, &rect);
+}
+
+void render_aabb_list(SDL_Renderer *renderer, array_list_t *aabb_list, u8 color_id) {
+    for (int i = 0; i < aabb_list->lenght; i++) {
+        aabb_t *aabb = (aabb_t*)array_list_get(aabb_list, i);
+
+        render_aabb(renderer, *(aabb), color_id);
+    }
 }
 
 void render_quad(SDL_Renderer *renderer, vec2_t position, u32 size, u8 color_id) {
