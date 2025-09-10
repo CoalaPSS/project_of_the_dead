@@ -38,18 +38,18 @@ typedef struct _body {
     void *owner;
 } body_t;
 
-typedef void(*body_collision_cb_func)(body_t *self, body_t *other, void *context);
-typedef void(*tile_collision_cb_func)(body_t *body, aabb_t *tile_aabb, void *context);
+typedef void(*body_collision_cb)(body_t *self, body_t *other, void *context);
+typedef void(*tile_collision_cb)(body_t *body, aabb_t *tile_aabb, void *context);
 
 typedef struct _physics_state {
     array_list_t *body_list;
-    array_list_t *tile_list;
+    array_list_t *tile_aabb_list;
 
-    body_collision_cb_func body_collision_callback;
-    tile_collision_cb_func tile_collision_callback;
+    body_collision_cb body_collision_callback;
+    tile_collision_cb tile_collision_callback;
 } physics_state_t;
 
-physics_state_t *init_physics_state(body_collision_cb_func body_cb, tile_collision_cb_func tile_cb);
+physics_state_t *init_physics_state(body_collision_cb body_cb, tile_collision_cb tile_cb);
 
 void aabb_to_sdl_rect(aabb_t aabb, SDL_Rect *rect);
 

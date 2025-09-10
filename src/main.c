@@ -22,6 +22,8 @@ int main(int argument_counter, char **arguments) {
     tilemap_load_layer(state->tilemap, ground_tiles, sizeof(ground_tiles), LAYER_GROUND);
     tilemap_load_layer(state->tilemap, object_tiles, sizeof(object_tiles), LAYER_OBJECT);
 
+    tilemap_get_collision_list(state->physics_state, state->tilemap, LAYER_OBJECT);
+
     player_t *player = create_player(20, 300.0, 300.0, COLOR_YELLOW);
 
     physics_add_body(state->physics_state, &(player->body));
@@ -34,7 +36,7 @@ int main(int argument_counter, char **arguments) {
     };
 
     SDL_Event event;
-    
+    // dbg_print_physics_state(state->physics_state);
     while (state->running) {
         get_tick(state->clock);
 

@@ -52,5 +52,7 @@ typedef struct _tilemap {
 
 tilemap_t *tilemap_create(u32 width, u32 height, u32 tile_size, int layer_count);
 void tilemap_load_layer(tilemap_t *map, const u16 *tiles, usize tile_array_size, int layer_id);
-void set_tile(tilemap_t *tilemap, int x, int y, u16 id, int layer);
+void set_tile(tilemap_t *map, u32 x, u32 y, u16 id, int layer);
+u16 get_tile(tilemap_t *map, u32 x, u32 y, int layer);
+void tilemap_get_collision_list(physics_state_t *p_state, tilemap_t *map, int layer);
 void render_tilemap(SDL_Renderer *renderer, tilemap_t *tilemap);

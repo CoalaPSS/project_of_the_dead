@@ -56,13 +56,41 @@ void tilemap_load_layer(tilemap_t *map, const u16 *tiles, usize tile_array_size,
             index = (y * map->width) + x;
             map->layers[layer_id][index] = tiles[index];
         }
-}
+    }
 }
 
-void set_tile(tilemap_t *tilemap, int x, int y, u16 id, int layer) {
-    if ((layer <= tilemap->layer_count) && (x < tilemap->width) && (y < tilemap->height)) {
-        int index = (y * tilemap->width) + x;
-        tilemap->layers[layer][index] = id;
+void set_tile(tilemap_t *map, u32 x, u32 y, u16 id, int layer) {
+    if ((layer <= map->layer_count) && (x < map->width) && (y < map->height)) {
+        int index = (y * map->width) + x;
+        map->layers[layer][index] = id;
+    }
+}
+
+u16 get_tile(tilemap_t *map, u32 x, u32 y, int layer) {
+    if ((layer <= map->layer_count) && (x < map->width) && (y < map->height)) {
+        int index = (y * map->width) + x;
+        return map->layers[layer][index];
+    }
+}
+
+void tilemap_get_collision_list(physics_state_t *p_state, tilemap_t *map, int layer) {
+    aabb_t tile_aabb;
+    tile_aabb.half_size = vec2_from_int(map->tile_size, 0.5);
+
+    u16 id;
+
+    for (int y = 0; y < map->height; y++) {
+        for (int x = 0; x < map->width; x++) {
+
+            id = get_tile(map, x, y, layer);
+            
+            if (map->tileinfo_table[id].solid) {
+                vec2_t relative_pos = (vec2_t){(f32)(x * map->tile_size), (f32)(y * map->tile_size)};
+                tile_aabb.position = vec2_add(relative_pos, tile_aabb.half_size);
+
+                array_list_append(p_state->tile_aabb_list, &tile_aabb);
+            }
+        }
     }
 }
 

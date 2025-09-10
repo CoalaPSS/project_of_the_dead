@@ -1,15 +1,17 @@
 #include "../include/physics.h"
 
-void dbg_print_body(void *data);
+void dbg_print_body_pos(void *data);
+void dbg_print_tile_pos(void *data);
 
-physics_state_t *init_physics_state(body_collision_cb_func body_cb, tile_collision_cb_func tile_cb) { 
+physics_state_t *init_physics_state(body_collision_cb body_cb, tile_collision_cb tile_cb) { 
     physics_state_t *state = (physics_state_t*)malloc(sizeof(physics_state_t));
 
     state->body_collision_callback = body_cb;
     state->tile_collision_callback = tile_cb;
 
     state->body_list = array_list_create(sizeof(body_t*), DEFAULT_INITIAL_CAPACITY);
-    state->tile_list = array_list_create(sizeof(aabb_t), DEFAULT_INITIAL_CAPACITY);
+    state->tile_aabb_list = array_list_create(sizeof(aabb_t), DEFAULT_INITIAL_CAPACITY);
+
     return state;
 }
 
@@ -47,15 +49,14 @@ void physics_collision_update(physics_state_t *state, void *context) {
         body_t *body = *(body_t**)array_list_get(state->body_list, i);
         
 
-        for (int j = 0; j < state->tile_list->lenght; j++) {
-            aabb_t tile_aabb = *(aabb_t*)array_list_get(state->tile_list, j);
+        for (int j = 0; j < state->tile_aabb_list->lenght; j++) {
+            aabb_t tile_aabb = *(aabb_t*)array_list_get(state->tile_aabb_list, j);
 
             if (physics_aabb_aabb_intersect(body->aabb, tile_aabb)) {
                 state->tile_collision_callback(body, &tile_aabb, context);
             }
         }
     }
-
 }
 
 void physics_update_entities(physics_state_t *state) {
@@ -74,16 +75,25 @@ void aabb_to_sdl_rect(aabb_t aabb, SDL_Rect *rect) {
     (*rect).h = size.y;
 }
 
-void dbg_print_body(void *data) {
+void dbg_print_body_pos(void *data) {
     body_t *body_data = (body_t*)data;
 
-    printf("\nBODY_DATA:\n");
     printf("Position: [%f, %f]\n", body_data->aabb.position.x, body_data->aabb.position.y);
-    printf("\n");
+}
+
+void dbg_print_tile_pos(void *data) {
+    aabb_t *tile_aabb = (aabb_t*)data;
+
+    printf("Position: [%f, %f]\n", tile_aabb->position.x, tile_aabb->position.y);
 }
 
 void dbg_print_physics_state(physics_state_t *state) {
-    printf("Body List:\n");
-    dbg_print_array_list(state->body_list, dbg_print_body);
+    printf("Body List:\n\n");
+    dbg_print_array_list(state->body_list, dbg_print_body_pos);
+
+    printf("\n\n\n");
+
+    printf("Tile AABB List:\n\n");
+    dbg_print_array_list(state->tile_aabb_list, dbg_print_tile_pos);
 }
 
