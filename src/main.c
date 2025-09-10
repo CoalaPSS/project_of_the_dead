@@ -10,8 +10,7 @@
 #include "../include/physics.h"
 
 
-#define SCREEN_WIDTH 1280
-#define SCREEN_HEIGHT 720
+
 
 
 //MAIN LOOP
@@ -19,16 +18,15 @@ int main(int argument_counter, char **arguments) {
     game_state_t *state = init_game(SCREEN_WIDTH, SCREEN_HEIGHT, 120);
     
 
-    state->tilemap = create_base_tilemap(ground_tiles, object_tiles, MAP_WIDTH, MAP_HEIGTH, TILE_SIZE);
+    state->tilemap = tilemap_create(MAP_WIDTH, MAP_HEIGTH, TILE_SIZE, 3);
+    tilemap_load_layer(state->tilemap, ground_tiles, sizeof(ground_tiles), LAYER_GROUND);
+    tilemap_load_layer(state->tilemap, object_tiles, sizeof(object_tiles), LAYER_OBJECT);
 
-    player_t *player = create_player(40, 300.0, 300.0, COLOR_YELLOW);
+    player_t *player = create_player(20, 300.0, 300.0, COLOR_YELLOW);
 
     physics_add_body(state->physics_state, &(player->body));
-    
-    dbg_print_physics_state(state->physics_state);
 
     array_list_t *aabb_render_list = array_list_create(sizeof(aabb_t), DEFAULT_INITIAL_CAPACITY);
-
 
     aabb_t test_aabb = {
         .position = (vec2_t){300, 300},

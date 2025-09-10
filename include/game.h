@@ -9,7 +9,16 @@
 #include "physics.h"
 #include "renderer.h"
 
+#define SCREEN_WIDTH 1280
+#define SCREEN_HEIGHT 720
+
+#define MAP_WIDTH 32
+#define MAP_HEIGTH 18
+#define TILE_SIZE 40
 #define PLAYER_SPEED 200
+
+extern const u16 ground_tiles[MAP_WIDTH * MAP_HEIGTH];
+extern const u16 object_tiles[MAP_WIDTH * MAP_HEIGTH];
 
 typedef struct _player {
     body_t body;

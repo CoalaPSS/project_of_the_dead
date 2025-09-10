@@ -1,60 +1,15 @@
 #include "../include/tile_manager.h"
 
-const u16 ground_tiles[MAP_WIDTH * MAP_HEIGTH] = {
-    2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2,
-    2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2,
-    2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2,
-    2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2,
-    2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2,
-    2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2,
-    2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2,
-    2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2,
-    2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2,
-    2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2,
-    2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2,
-    2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2,
-    2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2,
-    2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2,
-    2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2,
-    2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2,
-    2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2,
-    2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2
-};
 
-const u16 object_tiles[] = {
-    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-    0, 0, 0, 0, 0, 3, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-    0, 0, 0, 0, 0, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-    0, 0, 0, 0, 0, 0, 5, 0, 5, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-    0, 0, 0, 0, 0, 0, 5, 0, 5, 5, 5, 0, 5, 5, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-    0, 0, 0, 0, 0, 0, 5, 0, 0, 0, 0, 0, 0, 5, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-    0, 0, 0, 0, 0, 0, 5, 5, 0, 5, 5, 5, 0, 5, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-    0, 0, 0, 0, 0, 0, 5, 0, 0, 0, 0, 5, 0, 5, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-    0, 0, 0, 0, 5, 5, 5, 0, 0, 0, 0, 5, 0, 5, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-    0, 0, 0, 0, 5, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-    0, 0, 0, 0, 5, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
-};
-
-tileinfo_t *create_tileinfo_table() {
-    tileinfo_t *tileinfo_table = (tileinfo_t*)malloc(TILEINFO_TABLE_SIZE * sizeof(tileinfo_t));
-
-    tileinfo_table[TILE_GRASS_ID] = (tileinfo_t){true, 0.0, 0, 0, COLOR_MOSS_GREEN};
-    tileinfo_table[TILE_DIRT_ID] = (tileinfo_t){true, 0.5, 0, 0, COLOR_BROWN};
-    tileinfo_table[TILE_BUSH_ID] = (tileinfo_t){false, 0.0, 0, 0, COLOR_GREEN};
-    tileinfo_table[TILE_TREE_ID] = (tileinfo_t){true, 0.0, 0, 0, COLOR_DARK_GREEN};
-    tileinfo_table[TILE_STONE_PATH_ID] = (tileinfo_t){true, 2.5, 0, 0, COLOR_GRAY};
-    tileinfo_table[TILE_STONE_WALL_ID] = (tileinfo_t){true, 0.0, 0, 0, COLOR_DARK_GRAY};
-    tileinfo_table[TILE_GRASS_ID] = (tileinfo_t){true, 0.0, 0, 0, COLOR_WOOD_YELLOW};
-    tileinfo_table[TILE_RED_BOX] = (tileinfo_t){true, 0.0, 10, 0, COLOR_RED};
-
-    return tileinfo_table;
+void init_tileinfo_table(tileinfo_t *table) {
+    table[TILE_GRASS_ID] = (tileinfo_t){true, 0.0, 0, 0, COLOR_MOSS_GREEN};
+    table[TILE_DIRT_ID] = (tileinfo_t){true, 0.5, 0, 0, COLOR_BROWN};
+    table[TILE_BUSH_ID] = (tileinfo_t){false, 0.0, 0, 0, COLOR_GREEN};
+    table[TILE_TREE_ID] = (tileinfo_t){true, 0.0, 0, 0, COLOR_DARK_GREEN};
+    table[TILE_STONE_PATH_ID] = (tileinfo_t){true, 2.5, 0, 0, COLOR_GRAY};
+    table[TILE_STONE_WALL_ID] = (tileinfo_t){true, 0.0, 0, 0, COLOR_DARK_GRAY};
+    table[TILE_GRASS_ID] = (tileinfo_t){true, 0.0, 0, 0, COLOR_WOOD_YELLOW};
+    table[TILE_RED_BOX] = (tileinfo_t){true, 0.0, 10, 0, COLOR_RED};
 }
 
 
@@ -66,39 +21,42 @@ vec2_t absolute_pos(u32 x, u32 y, u32 size) {
     return position;
 }
 
-tilemap_t *create_base_tilemap(const u16 *ground_tiles, const u16 *object_tiles, u32 width, u32 height, u32 tile_size) {
-    tilemap_t *tilemap = (tilemap_t*)malloc(sizeof(tilemap_t));
+tilemap_t *tilemap_create(u32 width, u32 height, u32 tile_size, int layer_count) {
+    tilemap_t *map = (tilemap_t*)malloc(sizeof(tilemap_t));
 
-    tilemap->width = width;
-    tilemap->height = height;
-    tilemap->layer_count = 2;
-    tilemap->tile_size = tile_size;
-    tilemap->layers = (u16**)malloc(tilemap->layer_count * sizeof(u16*));
+    map->width = width;
+    map->height = height;
+    map->tile_size = tile_size;
+    map->layer_count = layer_count;
+    map->layers = malloc(sizeof(u16*) * layer_count);
+    for (int i = 0; i < layer_count; i++) {
+        usize layer_size = width * height * sizeof(u16);
+        map->layers[i] = (u16*)malloc(layer_size);
+        memset(map->layers[i], 0, layer_size);
+    }
 
-    tilemap->layers[LAYER_GROUND] = (u16*)malloc((width * height) * sizeof(u16));
-    tilemap->layers[LAYER_OBJECT] = (u16*)malloc((width * height) * sizeof(u16));
+    map->tileinfo_table = (tileinfo_t*)malloc((usize)TILEINFO_TABLE_SIZE);
+    init_tileinfo_table(map->tileinfo_table);
 
-    tilemap->tileinfo_table = create_tileinfo_table();
+    return map;
+}
+
+void tilemap_load_layer(tilemap_t *map, const u16 *tiles, usize tile_array_size, int layer_id) {
+    if ((map->width * map->height * sizeof(u16)) != tile_array_size) {
+        printf("TM_SIZE: %ld , TA_SIZE: %ld\n", (map->width * map->height * sizeof(u16)), tile_array_size);
+        printf("TMW: %u, TMH: %u\n", map->width, map->height);
+        ERROR_RETURN(1, "Tile Array incompatible with Tile Map");
+    }
+        
 
     int index;
 
-    //Ground layer
-    for (int y = 0; y < height; y++) {
-        for (int x = 0; x < width; x++) {
-            index = (y * width) + x;
-            tilemap->layers[LAYER_GROUND][index] = ground_tiles[index];
+    for (int y = 0; y < map->height; y++) {
+        for (int x = 0; x < map->width; x++) {
+            index = (y * map->width) + x;
+            map->layers[layer_id][index] = tiles[index];
         }
-    }
-
-    //Object layer
-    for (int y = 0; y < height; y++) {
-        for (int x = 0; x < width; x++) {
-            index = (y * width) + x;
-            tilemap->layers[LAYER_OBJECT][index] = object_tiles[index];
-        }
-    }
-
-    return tilemap;
+}
 }
 
 void set_tile(tilemap_t *tilemap, int x, int y, u16 id, int layer) {

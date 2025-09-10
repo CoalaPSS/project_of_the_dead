@@ -1,7 +1,9 @@
 TAREFAS:
 - Refatorar gerenciador de tiles:
-    - Os tiles devem ser armazenados em arrays
-    
+    - Os tiles devem ser armazenados em arrays [X]
+    - Implementar detecção de colisão ao tilemap []
+    - Implementar resposta de colisão []
+    - Revisar codebase para próximos passos[]
 
 
 THINGS TO IMPLEMENT:

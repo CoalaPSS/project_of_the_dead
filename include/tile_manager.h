@@ -9,10 +9,7 @@
 #include "renderer.h"
 
 #define MAX_TILE_IDS 65536
-#define TILEINFO_TABLE_SIZE 512
-#define MAP_WIDTH 32
-#define MAP_HEIGTH 18
-#define TILE_SIZE 60
+#define TILEINFO_TABLE_SIZE 256
 
 enum TILE_ID {
     TILE_EMPTY,
@@ -31,10 +28,6 @@ enum TILEMAP_LAYERS {
     LAYER_OBJECT,
     LAYER_FOREGROUND
 };
-
-
-extern const u16 ground_tiles[];
-extern const u16 object_tiles[];
 
 typedef struct _tileinfo {
     bool solid;
@@ -57,6 +50,7 @@ typedef struct _tilemap {
 } tilemap_t;
 
 
-tilemap_t *create_base_tilemap(const u16 *floor_tiles, const u16 *wall_tiles, u32 width, u32 height, u32 tile_size);
+tilemap_t *tilemap_create(u32 width, u32 height, u32 tile_size, int layer_count);
+void tilemap_load_layer(tilemap_t *map, const u16 *tiles, usize tile_array_size, int layer_id);
 void set_tile(tilemap_t *tilemap, int x, int y, u16 id, int layer);
 void render_tilemap(SDL_Renderer *renderer, tilemap_t *tilemap);
