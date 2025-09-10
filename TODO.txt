@@ -1,3 +1,9 @@
+TAREFAS:
+- Refatorar gerenciador de tiles:
+    - Os tiles devem ser armazenados em arrays
+    
+
+
 THINGS TO IMPLEMENT:
 
 - Collision detection:

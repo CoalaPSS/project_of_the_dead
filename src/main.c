@@ -19,7 +19,7 @@ int main(int argument_counter, char **arguments) {
     game_state_t *state = init_game(SCREEN_WIDTH, SCREEN_HEIGHT, 120);
     
 
-    state->tilemap = create_base_tilemap(floors, walls, MAP_WIDTH, MAP_HEIGTH, TILE_SIZE, state->physics_state);
+    state->tilemap = create_base_tilemap(ground_tiles, object_tiles, MAP_WIDTH, MAP_HEIGTH, TILE_SIZE);
 
     player_t *player = create_player(40, 300.0, 300.0, COLOR_YELLOW);
 

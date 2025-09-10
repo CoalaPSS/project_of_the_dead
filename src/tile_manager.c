@@ -1,20 +1,39 @@
 #include "../include/tile_manager.h"
 
-const u8 floors[MAP_WIDTH * MAP_HEIGTH] = {0};
+const u16 ground_tiles[MAP_WIDTH * MAP_HEIGTH] = {
+    2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2,
+    2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2,
+    2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2,
+    2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2,
+    2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2,
+    2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2,
+    2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2,
+    2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2,
+    2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2,
+    2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2,
+    2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2,
+    2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2,
+    2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2,
+    2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2,
+    2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2,
+    2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2,
+    2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2,
+    2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2
+};
 
-const u8 walls[] = {
+const u16 object_tiles[] = {
     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-    0, 0, 0, 0, 0, 3, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 3, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-    0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-    0, 0, 0, 0, 0, 0, 5, 0, 5, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
     0, 0, 0, 0, 0, 0, 5, 0, 5, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
     0, 0, 0, 0, 0, 0, 5, 0, 5, 5, 5, 0, 5, 5, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
     0, 0, 0, 0, 0, 0, 5, 0, 0, 0, 0, 0, 0, 5, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
     0, 0, 0, 0, 0, 0, 5, 5, 0, 5, 5, 5, 0, 5, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
     0, 0, 0, 0, 0, 0, 5, 0, 0, 0, 0, 5, 0, 5, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-    0, 0, 0, 0, 5, 5, 5, 0, 0, 0, 0, 0, 6, 5, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 5, 5, 5, 0, 0, 0, 0, 5, 0, 5, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
     0, 0, 0, 0, 5, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
     0, 0, 0, 0, 5, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
@@ -23,17 +42,21 @@ const u8 walls[] = {
     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
 };
 
-tile_type_t tile_type_table[TILE_TABLE_SIZE];
+tileinfo_t *create_tileinfo_table() {
+    tileinfo_t *tileinfo_table = (tileinfo_t*)malloc(TILEINFO_TABLE_SIZE * sizeof(tileinfo_t));
 
-void init_ttt() {
-    tile_type_table[TILE_GRASS] = (tile_type_t){TILE_GRASS, COLOR_MOSS_GREEN};
-    tile_type_table[TILE_DIRT] = (tile_type_t){TILE_DIRT, COLOR_BROWN};
-    tile_type_table[TILE_BUSH] = (tile_type_t){TILE_BUSH, COLOR_GREEN};
-    tile_type_table[TILE_TREE] = (tile_type_t){TILE_TREE, COLOR_DARK_GREEN};
-    tile_type_table[TILE_STONE_PATH] = (tile_type_t){TILE_STONE_PATH, COLOR_GRAY};
-    tile_type_table[TILE_STONE_WALL] = (tile_type_t){TILE_STONE_WALL, COLOR_DARK_GRAY};
-    tile_type_table[TILE_BOX] = (tile_type_t){TILE_BOX, COLOR_WOOD_YELLOW};
+    tileinfo_table[TILE_GRASS_ID] = (tileinfo_t){true, 0.0, 0, 0, COLOR_MOSS_GREEN};
+    tileinfo_table[TILE_DIRT_ID] = (tileinfo_t){true, 0.5, 0, 0, COLOR_BROWN};
+    tileinfo_table[TILE_BUSH_ID] = (tileinfo_t){false, 0.0, 0, 0, COLOR_GREEN};
+    tileinfo_table[TILE_TREE_ID] = (tileinfo_t){true, 0.0, 0, 0, COLOR_DARK_GREEN};
+    tileinfo_table[TILE_STONE_PATH_ID] = (tileinfo_t){true, 2.5, 0, 0, COLOR_GRAY};
+    tileinfo_table[TILE_STONE_WALL_ID] = (tileinfo_t){true, 0.0, 0, 0, COLOR_DARK_GRAY};
+    tileinfo_table[TILE_GRASS_ID] = (tileinfo_t){true, 0.0, 0, 0, COLOR_WOOD_YELLOW};
+    tileinfo_table[TILE_RED_BOX] = (tileinfo_t){true, 0.0, 10, 0, COLOR_RED};
+
+    return tileinfo_table;
 }
+
 
 vec2_t absolute_pos(u32 x, u32 y, u32 size) {
     vec2_t position = (vec2_t){(f32)x, (f32)y};
@@ -43,88 +66,94 @@ vec2_t absolute_pos(u32 x, u32 y, u32 size) {
     return position;
 }
 
-u8 get_tile_color(i32 id) {
-    tile_type_t tt = tile_type_table[id];
-    return tt.color_id;
-}
-
-tilemap_t *create_base_tilemap(const u8 *floor_tiles, const u8 *wall_tiles, u32 width, u32 height, u32 tile_size, physics_state_t *p_state) {
-    init_ttt();
-
+tilemap_t *create_base_tilemap(const u16 *ground_tiles, const u16 *object_tiles, u32 width, u32 height, u32 tile_size) {
     tilemap_t *tilemap = (tilemap_t*)malloc(sizeof(tilemap_t));
 
+    tilemap->width = width;
+    tilemap->height = height;
+    tilemap->layer_count = 2;
     tilemap->tile_size = tile_size;
-    tilemap->floors = array_list_create(sizeof(tile_t), DEFAULT_INITIAL_CAPACITY);
-    tilemap->walls = array_list_create(sizeof(tile_t), DEFAULT_INITIAL_CAPACITY);
-    //TODO: Implement tileects later
+    tilemap->layers = (u16**)malloc(tilemap->layer_count * sizeof(u16*));
 
-    u32 x, y, index;
-    tile_t tile;
+    tilemap->layers[LAYER_GROUND] = (u16*)malloc((width * height) * sizeof(u16));
+    tilemap->layers[LAYER_OBJECT] = (u16*)malloc((width * height) * sizeof(u16));
 
-    aabb_t tile_aabb;
-    tile_aabb.half_size = vec2_from_int(tile_size, 0.5);
+    tilemap->tileinfo_table = create_tileinfo_table();
 
-    for (y = 0; y < height; y++) {
-        for (x = 0; x < width; x++) {
+    int index;
+
+    //Ground layer
+    for (int y = 0; y < height; y++) {
+        for (int x = 0; x < width; x++) {
             index = (y * width) + x;
-
-            //Floors
-            tile.id = floor_tiles[index];
-            tile.color_id = get_tile_color(tile.id);
-            tile.position = vec2_mult((vec2_t){(f32)x, (f32)y}, (f32)tilemap->tile_size);
-            tile.solid = false;
-            array_list_append(tilemap->floors, &tile);
-
-            //Walls
-            tile.id = wall_tiles[index];
-            if (tile.id) {
-                tile.color_id = get_tile_color(tile.id);
-                tile.solid = true;
-                array_list_append(tilemap->walls, &tile);
-
-                tile_aabb.position = vec2_add(tile.position, tile_aabb.half_size);
-
-                array_list_append(p_state->tile_list, &tile_aabb);
-            } 
+            tilemap->layers[LAYER_GROUND][index] = ground_tiles[index];
         }
     }
+
+    //Object layer
+    for (int y = 0; y < height; y++) {
+        for (int x = 0; x < width; x++) {
+            index = (y * width) + x;
+            tilemap->layers[LAYER_OBJECT][index] = object_tiles[index];
+        }
+    }
+
     return tilemap;
 }
 
+void set_tile(tilemap_t *tilemap, int x, int y, u16 id, int layer) {
+    if ((layer <= tilemap->layer_count) && (x < tilemap->width) && (y < tilemap->height)) {
+        int index = (y * tilemap->width) + x;
+        tilemap->layers[layer][index] = id;
+    }
+}
 
 void render_tilemap(SDL_Renderer *renderer, tilemap_t *tilemap) {
     vec2_t render_pos;
     vec2_t tile_hs = vec2_from_int(tilemap->tile_size, 0.5);
     
-    tile_t *tile;
     SDL_Rect rect;
+    int index;
 
-    //Draw floors
+    rect.w = tilemap->tile_size;
+    rect.h = tilemap->tile_size;
 
-    for (int i = 0; i < tilemap->floors->lenght; i++) {
-        tile = (tile_t*)array_list_get(tilemap->floors, i);
+    //Draw ground layer
 
-        rect.x = (u32)tile->position.x;
-        rect.y = (u32)tile->position.y;
-        rect.w = tilemap->tile_size;
-        rect.h = tilemap->tile_size;
+    for (int y = 0; y < tilemap->height; y++) {
+        for (int x = 0; x < tilemap->width; x++) {
 
-        set_render_color(renderer, get_color(tile->color_id));
-        SDL_RenderFillRect(renderer, &rect);
+            index = (y * tilemap->width) + x;
+
+            u16 id = tilemap->layers[LAYER_GROUND][index];
+
+            if (id != TILE_EMPTY) {
+                color_t color = get_color((tilemap->tileinfo_table[id]).debug_color_id);
+
+                rect.x = x * tilemap->tile_size;
+                rect.y = y * tilemap->tile_size;
+                set_render_color(renderer, color);
+                SDL_RenderFillRect(renderer, &rect);
+            }
+                
+        }
     }
+    // Draw object layer
+    for (int y = 0; y < tilemap->height; y++) {
+        for (int x = 0; x < tilemap->width; x++) {
 
-    //Draw walls
+            index = (y * tilemap->width) + x;
 
-    for (int i = 0; i < tilemap->walls->lenght; i++) {
-        tile = (tile_t*)array_list_get(tilemap->walls, i);
+            u16 id = tilemap->layers[LAYER_OBJECT][index];
 
-        rect.x = (u32)tile->position.x;
-        rect.y = (u32)tile->position.y;
-        rect.w = tilemap->tile_size;
-        rect.h = tilemap->tile_size;
+            if (id != TILE_EMPTY) {
+                color_t color = get_color((tilemap->tileinfo_table[id]).debug_color_id);
 
-        set_render_color(renderer, get_color(tile->color_id));
-        SDL_RenderFillRect(renderer, &rect);
+                rect.x = x * tilemap->tile_size;
+                rect.y = y * tilemap->tile_size;
+                set_render_color(renderer, color);
+                SDL_RenderFillRect(renderer, &rect);
+            }
+        }
     }
-    // ERROR_RETURN(1, "Debug exit");
 }
