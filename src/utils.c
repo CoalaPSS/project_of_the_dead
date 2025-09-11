@@ -1,5 +1,9 @@
 #include "../include/utils.h"
 
+void vec2_add_to(vec2_t *u, vec2_t v) {
+    u->x = u->x + v.x;
+    u->y = u->y + v.y;
+}
 
 vec2_t vec2_add(vec2_t u, vec2_t v) {
     return (vec2_t){.x = u.x + v.x, .y = u.y + v.y};

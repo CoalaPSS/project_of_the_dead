@@ -2,9 +2,11 @@
 
 #include <stdbool.h>
 #include <math.h>
+#include <float.h>
 #include "types.h"
 #include "arraylist.h"
 // #include "tile_manager.h"
+
 
 
 enum BODY_TYPE {

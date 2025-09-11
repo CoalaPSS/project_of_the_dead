@@ -12,7 +12,7 @@
         exit(EXIT_CODE); \
     } while(0)
 
-
+void vec2_add_to(vec2_t *u, vec2_t v);
 vec2_t vec2_add(vec2_t u, vec2_t v);
 vec2_t vec2_sub(vec2_t u, vec2_t v);
 vec2_t vec2_mult(vec2_t v, f32 factor);
