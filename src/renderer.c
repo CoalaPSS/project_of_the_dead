@@ -3,6 +3,8 @@
 color_t color_chart[COLOR_CHART_SIZE];
 
 void init_color_chart() {
+    color_chart[COLOR_WHITE] = (color_t){255, 255, 255};
+    color_chart[COLOR_OFFWHITE] = (color_t){200, 200, 200};
     color_chart[COLOR_BLACK] = (color_t){0, 0, 0};
     color_chart[COLOR_DARK_GRAY] = (color_t){40, 40, 40};
     color_chart[COLOR_GRAY] = (color_t){120, 120, 120};
@@ -45,6 +47,14 @@ void render_aabb_list(SDL_Renderer *renderer, array_list_t *aabb_list, u8 color_
     }
 }
 
+void render_body_list(SDL_Renderer *renderer, array_list_t *body_list, u8 color_id) {
+    for (int i = 0; i < body_list->lenght; i++) {
+        body_t *b = *(body_t**)array_list_get(body_list, i);
+        // dbg_print_body_pos(b);
+        render_aabb(renderer, b->aabb, color_id);
+    }
+}
+
 void render_quad(SDL_Renderer *renderer, vec2_t position, u32 size, u8 color_id) {
     SDL_Rect rect = {
         .x = position.x,
@@ -52,7 +62,6 @@ void render_quad(SDL_Renderer *renderer, vec2_t position, u32 size, u8 color_id)
         .w = size,
         .h = size,
     };
-
     set_render_color(renderer, get_color(color_id));
     SDL_RenderDrawRect(renderer, &rect);
 }

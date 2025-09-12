@@ -21,22 +21,21 @@ int main(int argument_counter, char **arguments) {
     state->tilemap = tilemap_create(MAP_WIDTH, MAP_HEIGTH, TILE_SIZE, 3);
     tilemap_load_layer(state->tilemap, ground_tiles, sizeof(ground_tiles), LAYER_GROUND);
     tilemap_load_layer(state->tilemap, object_tiles, sizeof(object_tiles), LAYER_OBJECT);
-
     tilemap_get_collision_list(state->physics_state, state->tilemap, LAYER_OBJECT);
 
-    player_t *player = create_player(20, 300.0, 300.0, COLOR_YELLOW);
+    player_t *player = create_player(40, 300.0, 300.0, COLOR_YELLOW);
 
     physics_add_body(state->physics_state, &(player->body));
 
-    array_list_t *aabb_render_list = array_list_create(sizeof(aabb_t), DEFAULT_INITIAL_CAPACITY);
+    array_list_t *aabb_collision_list = array_list_create(sizeof(aabb_t), DEFAULT_INITIAL_CAPACITY);
 
-    aabb_t test_aabb = {
-        .position = (vec2_t){300, 300},
-        .half_size = (vec2_t){50, 50}
-    };
+    // aabb_t test_aabb = {
+    //     .position = (vec2_t){300, 300},
+    //     .half_size = (vec2_t){50, 50}
+    // };
 
     SDL_Event event;
-    // dbg_print_physics_state(state->physics_state);
+    
     while (state->running) {
         get_tick(state->clock);
 
@@ -63,16 +62,18 @@ int main(int argument_counter, char **arguments) {
         SDL_ShowCursor(SDL_DISABLE);
         process_key_presses(&state->input->keys, player, 0);
         update_player_movement(player, state->clock->dt);
-        physics_collision_update(state->physics_state, aabb_render_list);
+        physics_collision_update(state->physics_state, aabb_collision_list);
 
         //Rendering
         clear_render(state->renderer, get_color(COLOR_DARK_GRAY));
-        render_quad(state->renderer, state->input->mouse.position, 10, COLOR_RED);
-        render_tilemap(state->renderer, state->tilemap);
-        t_render_player(player, state->renderer);
+        // render_quad(state->renderer, state->input->mouse.position, 10, COLOR_RED);
+        // render_tilemap(state->renderer, state->tilemap);
+        render_aabb_list(state->renderer, state->physics_state->tile_aabb_list, COLOR_OFFWHITE);
+        // t_render_player(player, state->renderer);
+        render_body_list(state->renderer, state->physics_state->body_list, COLOR_WHITE);
+        render_aabb_list(state->renderer, aabb_collision_list, COLOR_RED);  
         
-        render_aabb_list(state->renderer, aabb_render_list, COLOR_RED);
-        array_list_clear(aabb_render_list);
+        array_list_clear(aabb_collision_list);
 
         SDL_RenderPresent(state->renderer);
 

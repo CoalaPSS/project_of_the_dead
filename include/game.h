@@ -14,7 +14,7 @@
 
 #define MAP_WIDTH 32
 #define MAP_HEIGTH 18
-#define TILE_SIZE 40
+#define TILE_SIZE 60
 #define PLAYER_SPEED 200
 
 extern const u16 ground_tiles[MAP_WIDTH * MAP_HEIGTH];

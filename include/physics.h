@@ -44,8 +44,8 @@ typedef void(*body_collision_cb)(body_t *self, body_t *other, void *context);
 typedef void(*tile_collision_cb)(body_t *body, aabb_t *tile_aabb, void *context);
 
 typedef struct _physics_state {
-    array_list_t *body_list;
-    array_list_t *tile_aabb_list;
+    array_list_t *body_list; // Guarda ponteiros para struct body_t
+    array_list_t *tile_aabb_list; // Guarda struct aabb_t
 
     body_collision_cb body_collision_callback;
     tile_collision_cb tile_collision_callback;
@@ -64,3 +64,5 @@ void physics_update_entities(physics_state_t *state);
 void physics_collision_update(physics_state_t *state, void *context);
 
 void dbg_print_physics_state(physics_state_t *state);
+
+void dbg_print_body_pos(void *data);
