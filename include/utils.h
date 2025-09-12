@@ -2,6 +2,7 @@
 
 #include <stdio.h>
 #include <SDL2/SDL.h>
+#include <math.h>
 #include "types.h"
 
 #define DEBUG(...) fprintf(stderr, "DEBUG %s:%d: "  "\n", __FILE__, __LINE__, ##__VA_ARGS__)
@@ -18,3 +19,4 @@ vec2_t vec2_sub(vec2_t u, vec2_t v);
 vec2_t vec2_mult(vec2_t v, f32 factor);
 vec2_t vec2_div(vec2_t v, f32 factor);
 vec2_t vec2_from_int(u32 integer, f32 factor);
+vec2_t vec2_normalize(vec2_t v); 

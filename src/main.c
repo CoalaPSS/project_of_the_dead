@@ -61,16 +61,14 @@ int main(int argument_counter, char **arguments) {
 
         SDL_ShowCursor(SDL_DISABLE);
         process_key_presses(&state->input->keys, player, 0);
-        update_player_movement(player, state->clock->dt);
-        physics_collision_update(state->physics_state, aabb_collision_list);
+        physics_update(state->physics_state, state->clock->dt, PLAYER_SPEED, aabb_collision_list);
 
         //Rendering
         clear_render(state->renderer, get_color(COLOR_DARK_GRAY));
-        // render_quad(state->renderer, state->input->mouse.position, 10, COLOR_RED);
-        // render_tilemap(state->renderer, state->tilemap);
-        render_aabb_list(state->renderer, state->physics_state->tile_aabb_list, COLOR_OFFWHITE);
-        // t_render_player(player, state->renderer);
-        render_body_list(state->renderer, state->physics_state->body_list, COLOR_WHITE);
+        render_tilemap(state->renderer, state->tilemap);
+        // render_aabb_list(state->renderer, state->physics_state->tile_aabb_list, COLOR_OFFWHITE);
+        t_render_player(player, state->renderer);
+        // render_body_list(state->renderer, state->physics_state->body_list, COLOR_WHITE);
         render_aabb_list(state->renderer, aabb_collision_list, COLOR_RED);  
         
         array_list_clear(aabb_collision_list);

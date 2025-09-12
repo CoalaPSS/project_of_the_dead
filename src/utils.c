@@ -24,3 +24,11 @@ vec2_t vec2_from_int(u32 integer, f32 factor) {
     f32 res = (f32)integer * factor;
     return (vec2_t){res, res};
 }
+
+vec2_t vec2_normalize(vec2_t v) {
+    f32 mag = sqrtf((v.x * v.x) + (v.y * v.y));
+
+    if (mag > 0) {
+        return vec2_div(v, mag);
+    }
+}

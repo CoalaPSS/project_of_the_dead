@@ -1,6 +1,6 @@
 #include "../include/game.h"
 
-void tile_collision_callback(body_t *body, aabb_t *tile_aabb, void *context);
+void tile_collision_callback(body_t *body, aabb_t tile_aabb, void *context);
 
 game_state_t *init_game(const int sw, const int sh, const int fps) {
     SDL_Init(SDL_INIT_VIDEO);
@@ -46,12 +46,12 @@ void process_key_presses(key_states_t *key_states, player_t *player, bool debug_
     }
 }
 
-void tile_collision_callback(body_t *body, aabb_t *tile_aabb, void *context) {
+void tile_collision_callback(body_t *body, aabb_t tile_aabb, void *context) {
     if (body->id == ID_PLAYER) {
         array_list_t *aabb_list = (array_list_t*)context;
         
         array_list_append(aabb_list, &body->aabb);
-        array_list_append(aabb_list, tile_aabb);
+        array_list_append(aabb_list, &tile_aabb);
     }
 }
 

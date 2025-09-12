@@ -1,11 +1,20 @@
 #include "../include/physics.h"
 
-#define RESOLVE_EPSILON 0.0001f
+void aabb_to_sdl_rect(aabb_t aabb, SDL_Rect *rect) {
+    vec2_t relative_pos = vec2_sub(aabb.position, aabb.half_size);
+    vec2_t size = vec2_mult(aabb.half_size, 2.0);
+
+    (*rect).x = relative_pos.x;
+    (*rect).y = relative_pos.y; 
+    (*rect).w = size.x;
+    (*rect).h = size.y;
+}
 
 void aabb_min_max(vec2_t *min, vec2_t *max, aabb_t aabb) {
     *(min) = vec2_sub(aabb.position, aabb.half_size);
     *(max) = vec2_add(aabb.position, aabb.half_size);
 }
+
 
 bool physics_point_aabb_intersect(vec2_t point, aabb_t box) {
     vec2_t min = vec2_sub(box.position, box.half_size);
@@ -57,29 +66,29 @@ void physics_add_body(physics_state_t *state, body_t *body) {
     array_list_append(state->body_list, &body);
 }
 
-void physics_collision_update(physics_state_t *state, void *context) {
-    // itera bodies
+
+void physics_collision_update(physics_state_t *state) {
+    collision_event_t col_event;
+
     for (int i = 0; i < state->body_list->lenght; i++) {
         body_t *body = *(body_t**)array_list_get(state->body_list, i);
 
         for (int j = 0; j < state->tile_aabb_list->lenght; ++j) {
             aabb_t tile_aabb = *(aabb_t*)array_list_get(state->tile_aabb_list, j);
 
-            // quick reject: se não intersectam agora, pula
             if (!physics_aabb_aabb_intersect(body->aabb, tile_aabb)) continue;
 
-            // calcula penetração (mtv) assumindo a convenção: somar mtv a body separa dos tiles
+            col_event.type = COLLISION_BODY_TILE;
+            col_event.body_01 = body;
+            col_event.body_02 = NULL;
+            col_event.tile_aabb = tile_aabb;
+            array_list_append(state->collision_list, &col_event);
+
             vec2_t mtv;
             if (!aabb_penetration_vector(&mtv, body->aabb, tile_aabb)) continue;
 
-            // aplicamos apenas componente X
             if (mtv.x != 0.0f) {
-                body->aabb.position.x += mtv.x;
-
-                // pequeno nudge para evitar stick devido a float
-                body->aabb.position.x += (mtv.x > 0.0f ? RESOLVE_EPSILON : -RESOLVE_EPSILON);
-
-                // zera velocidade horizontal (evita atravessar novamente no mesmo frame)
+                body->aabb.position.x += mtv.x;                
                 body->velocity.x = 0.0f;
             }
         }
@@ -91,23 +100,40 @@ void physics_collision_update(physics_state_t *state, void *context) {
             vec2_t mtv;
             if (!aabb_penetration_vector(&mtv, body->aabb, tile_aabb)) continue;
 
-            // aplicamos apenas componente Y
+            
             if (mtv.y != 0.0f) {
                 body->aabb.position.y += mtv.y;
-                // body->aabb.position.y += (mtv.y > 0.0f ? RESOLVE_EPSILON : -RESOLVE_EPSILON);
-
-                // zera velocidade vertical
                 body->velocity.y = 0.0f;
-
-                // opcional: se mtv.y < 0 => body colidiu por baixo (grounded), ajuste conforme sua convenção
-                // if (mtv.y < 0.0f) body->is_grounded = true;
             }
         }
     }
 
 }
 
-void physics_update_entities(physics_state_t *state) {
+void physics_collision_cb(physics_state_t *state, void *context) {
+    for (int i = 0; i < state->collision_list->lenght; i++) {
+        collision_event_t event = *(collision_event_t*)array_list_get(state->collision_list, i);
+
+        if (event.type == COLLISION_BODY_TILE) {
+            state->tile_collision_callback(event.body_01, event.tile_aabb, context);
+        }
+    }
+    array_list_clear(state->collision_list);
+}
+
+void physics_update(physics_state_t *state, f32 dt, f32 speed, void *context) {
+    for (int i = 0; i < state->body_list->lenght; i++) {
+        body_t *body = *(body_t**)array_list_get(state->body_list, i);
+
+        body->velocity = vec2_normalize(body->velocity);
+        body->velocity = vec2_mult(body->velocity, speed);
+
+        body->aabb.position.x += body->velocity.x * dt;
+        body->aabb.position.y += body->velocity.y * dt;
+    }
+
+    physics_collision_update(state);
+    physics_collision_cb(state, context);
 
 }
 
@@ -119,18 +145,9 @@ physics_state_t *init_physics_state(body_collision_cb body_cb, tile_collision_cb
 
     state->body_list = array_list_create(sizeof(body_t*), DEFAULT_INITIAL_CAPACITY);
     state->tile_aabb_list = array_list_create(sizeof(aabb_t), DEFAULT_INITIAL_CAPACITY);
+    state->collision_list = array_list_create(sizeof(collision_event_t), COLLISION_LIST_CAPACITY);
 
     return state;
-}
-
-void aabb_to_sdl_rect(aabb_t aabb, SDL_Rect *rect) {
-    vec2_t relative_pos = vec2_sub(aabb.position, aabb.half_size);
-    vec2_t size = vec2_mult(aabb.half_size, 2.0);
-
-    (*rect).x = relative_pos.x;
-    (*rect).y = relative_pos.y; 
-    (*rect).w = size.x;
-    (*rect).h = size.y;
 }
 
 void dbg_print_body_pos(void *data) {

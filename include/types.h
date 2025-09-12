@@ -13,6 +13,7 @@ typedef float f32;
 typedef double f64;
 typedef size_t usize;
 
+
 typedef struct _vec2 {
     f32 x;
     f32 y;
