@@ -1,14 +1,15 @@
 #include "../include/tile_manager.h"
 
 
-void init_tileinfo_table(tileinfo_t *table) {
+
+void init_tileinfo_table(SDL_Renderer *renderer, tileinfo_t *table) {
     table[TILE_GRASS_ID] = (tileinfo_t){true, 0.0, 0, 0, COLOR_MOSS_GREEN};
+    table[TILE_ROCK_WALL_ID] = (tileinfo_t){true, 0.0, 0, 0, COLOR_DARK_GRAY};
     table[TILE_DIRT_ID] = (tileinfo_t){true, 0.5, 0, 0, COLOR_BROWN};
     table[TILE_BUSH_ID] = (tileinfo_t){false, 0.0, 0, 0, COLOR_GREEN};
     table[TILE_TREE_ID] = (tileinfo_t){true, 0.0, 0, 0, COLOR_DARK_GREEN};
     table[TILE_STONE_PATH_ID] = (tileinfo_t){true, 2.5, 0, 0, COLOR_GRAY};
     table[TILE_STONE_WALL_ID] = (tileinfo_t){true, 0.0, 0, 0, COLOR_DARK_GRAY};
-    table[TILE_GRASS_ID] = (tileinfo_t){true, 0.0, 0, 0, COLOR_WOOD_YELLOW};
     table[TILE_RED_BOX] = (tileinfo_t){true, 0.0, 10, 0, COLOR_RED};
 }
 
@@ -21,7 +22,7 @@ vec2_t absolute_pos(u32 x, u32 y, u32 size) {
     return position;
 }
 
-tilemap_t *tilemap_create(u32 width, u32 height, u32 tile_size, int layer_count) {
+tilemap_t *tilemap_create(SDL_Renderer *renderer, u32 width, u32 height, u32 tile_size, int layer_count) {
     tilemap_t *map = (tilemap_t*)malloc(sizeof(tilemap_t));
 
     map->width = width;
@@ -36,7 +37,7 @@ tilemap_t *tilemap_create(u32 width, u32 height, u32 tile_size, int layer_count)
     }
 
     map->tileinfo_table = (tileinfo_t*)malloc((usize)TILEINFO_TABLE_SIZE);
-    init_tileinfo_table(map->tileinfo_table);
+    init_tileinfo_table(renderer, map->tileinfo_table);
 
     return map;
 }
@@ -94,15 +95,15 @@ void tilemap_get_collision_list(physics_state_t *p_state, tilemap_t *map, int la
     }
 }
 
-void render_tilemap(SDL_Renderer *renderer, tilemap_t *tilemap) {
+void render_tilemap(SDL_Renderer *renderer, tilemap_t *tilemap, texture_atlas_t *tilemap_atlas) {
     vec2_t render_pos;
     vec2_t tile_hs = vec2_from_int(tilemap->tile_size, 0.5);
     
-    SDL_Rect rect;
+    SDL_Rect src_rect, dst_rect;
     int index;
 
-    rect.w = tilemap->tile_size;
-    rect.h = tilemap->tile_size;
+    dst_rect.w = tilemap->tile_size;
+    dst_rect.h = tilemap->tile_size;
 
     //Draw ground layer
 
@@ -113,15 +114,13 @@ void render_tilemap(SDL_Renderer *renderer, tilemap_t *tilemap) {
 
             u16 id = tilemap->layers[LAYER_GROUND][index];
 
-            if (id != TILE_EMPTY) {
-                color_t color = get_color((tilemap->tileinfo_table[id]).debug_color_id);
+            if (id == TILE_EMPTY) continue;
 
-                rect.x = x * tilemap->tile_size;
-                rect.y = y * tilemap->tile_size;
-                set_render_color(renderer, color);
-                SDL_RenderFillRect(renderer, &rect);
-            }
-                
+            dst_rect.x = x * tilemap->tile_size;
+            dst_rect.y = y * tilemap->tile_size;
+
+            get_src_texture_from_id(tilemap_atlas, &src_rect, id);
+            SDL_RenderCopy(renderer, tilemap_atlas->atlas, &src_rect, &dst_rect);
         }
     }
     // Draw object layer
@@ -132,14 +131,13 @@ void render_tilemap(SDL_Renderer *renderer, tilemap_t *tilemap) {
 
             u16 id = tilemap->layers[LAYER_OBJECT][index];
 
-            if (id != TILE_EMPTY) {
-                color_t color = get_color((tilemap->tileinfo_table[id]).debug_color_id);
+            if (id == TILE_EMPTY) continue;
 
-                rect.x = x * tilemap->tile_size;
-                rect.y = y * tilemap->tile_size;
-                set_render_color(renderer, color);
-                SDL_RenderFillRect(renderer, &rect);
-            }
+            dst_rect.x = x * tilemap->tile_size;
+            dst_rect.y = y * tilemap->tile_size;
+
+            get_src_texture_from_id(tilemap_atlas, &src_rect, id);
+            SDL_RenderCopy(renderer, tilemap_atlas->atlas, &src_rect, &dst_rect);
         }
     }
 }

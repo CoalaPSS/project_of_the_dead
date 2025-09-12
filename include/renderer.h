@@ -1,7 +1,7 @@
 #pragma once
 
 #include <SDL2/SDL.h>
-// #include "player"
+#include <SDL2/SDL_image.h>
 #include "types.h"
 #include "arraylist.h"
 #include "physics.h"
