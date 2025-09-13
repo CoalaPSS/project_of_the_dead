@@ -27,10 +27,8 @@ int main(int argument_counter, char **arguments) {
 
     array_list_t *aabb_collision_list = array_list_create(sizeof(aabb_t), DEFAULT_INITIAL_CAPACITY);
 
-    // aabb_t test_aabb = {
-    //     .position = (vec2_t){300, 300},
-    //     .half_size = (vec2_t){50, 50}
-    // };
+    texture_sheet_t *tilemap_texture_sheet = render_load_texture_sheet(state->renderer, "assets/tilemap_atlas.png", 32, 128, 128);
+    
 
     SDL_Event event;
     
@@ -63,7 +61,7 @@ int main(int argument_counter, char **arguments) {
 
         //Rendering
         clear_render(state->renderer, get_color(COLOR_DARK_GRAY));
-        render_tilemap(state->renderer, state->tilemap, &state->texture_table->tilemap_atlas);
+        render_tilemap(state->renderer, state->tilemap, tilemap_texture_sheet);
         // render_aabb_list(state->renderer, state->physics_state->tile_aabb_list, COLOR_OFFWHITE);
         t_render_player(player, state->renderer);
         // render_body_list(state->renderer, state->physics_state->body_list, COLOR_WHITE);

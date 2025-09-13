@@ -7,7 +7,6 @@
 #include "arraylist.h"
 #include "physics.h"
 #include "renderer.h"
-#include "resource_manager.h"
 
 #define MAX_TILE_IDS 65536
 #define TILEINFO_TABLE_SIZE 256
@@ -58,4 +57,4 @@ void tilemap_load_layer(tilemap_t *map, const u16 *tiles, usize tile_array_size,
 void set_tile(tilemap_t *map, u32 x, u32 y, u16 id, int layer);
 u16 get_tile(tilemap_t *map, u32 x, u32 y, int layer);
 void tilemap_get_collision_list(physics_state_t *p_state, tilemap_t *map, int layer);
-void render_tilemap(SDL_Renderer *renderer, tilemap_t *tilemap, texture_atlas_t *tilemap_atlas);
+void render_tilemap(SDL_Renderer *renderer, tilemap_t *tilemap, texture_sheet_t *sheet);

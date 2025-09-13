@@ -65,3 +65,29 @@ void render_quad(SDL_Renderer *renderer, vec2_t position, u32 size, u8 color_id)
     set_render_color(renderer, get_color(color_id));
     SDL_RenderDrawRect(renderer, &rect);
 }
+
+void render_texture_frame(SDL_Renderer *renderer, texture_sheet_t *sheet, u32 x, u32 y, int id, u32 dst_size) {
+    SDL_Rect src, dst;
+
+    src.x = (id % sheet->cols) * sheet->frame_size;
+    src.y = (id / sheet->rows) * sheet->frame_size;
+    src.w = sheet->frame_size;
+    src.h = sheet->frame_size;
+
+    dst.x = x;
+    dst.y = y;
+    dst.w = dst_size;
+    dst.h = dst_size;
+
+    SDL_RenderCopy(renderer, sheet->texture, &src, &dst);
+}
+
+texture_sheet_t *render_load_texture_sheet(SDL_Renderer *renderer, char *path, u32 frame_size, int width, int height) {
+    texture_sheet_t *sheet = (texture_sheet_t*)malloc(sizeof(texture_sheet_t));
+    sheet->texture = IMG_LoadTexture(renderer, path);
+    sheet->frame_size = frame_size;
+    sheet->cols = width / frame_size;
+    sheet->rows = height / frame_size;
+
+    return sheet;
+}

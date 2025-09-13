@@ -95,7 +95,7 @@ void tilemap_get_collision_list(physics_state_t *p_state, tilemap_t *map, int la
     }
 }
 
-void render_tilemap(SDL_Renderer *renderer, tilemap_t *tilemap, texture_atlas_t *tilemap_atlas) {
+void render_tilemap(SDL_Renderer *renderer, tilemap_t *tilemap, texture_sheet_t *sheet) {
     vec2_t render_pos;
     vec2_t tile_hs = vec2_from_int(tilemap->tile_size, 0.5);
     
@@ -116,11 +116,7 @@ void render_tilemap(SDL_Renderer *renderer, tilemap_t *tilemap, texture_atlas_t 
 
             if (id == TILE_EMPTY) continue;
 
-            dst_rect.x = x * tilemap->tile_size;
-            dst_rect.y = y * tilemap->tile_size;
-
-            get_src_texture_from_id(tilemap_atlas, &src_rect, id);
-            SDL_RenderCopy(renderer, tilemap_atlas->atlas, &src_rect, &dst_rect);
+            render_texture_frame(renderer, sheet, (x*tilemap->tile_size), (y*tilemap->tile_size), id, tilemap->tile_size);
         }
     }
     // Draw object layer
@@ -133,11 +129,7 @@ void render_tilemap(SDL_Renderer *renderer, tilemap_t *tilemap, texture_atlas_t 
 
             if (id == TILE_EMPTY) continue;
 
-            dst_rect.x = x * tilemap->tile_size;
-            dst_rect.y = y * tilemap->tile_size;
-
-            get_src_texture_from_id(tilemap_atlas, &src_rect, id);
-            SDL_RenderCopy(renderer, tilemap_atlas->atlas, &src_rect, &dst_rect);
+            render_texture_frame(renderer, sheet, (x*tilemap->tile_size), (y*tilemap->tile_size), id, tilemap->tile_size);
         }
     }
 }

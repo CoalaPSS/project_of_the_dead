@@ -14,7 +14,7 @@
 
 #define MAP_WIDTH 32
 #define MAP_HEIGTH 18
-#define TILE_SIZE 32
+#define TILE_SIZE 80
 #define PLAYER_SPEED 200
 
 extern const u16 ground_tiles[MAP_WIDTH * MAP_HEIGTH];
@@ -38,7 +38,6 @@ typedef struct _game {
 
     physics_state_t *physics_state;
     tilemap_t *tilemap;
-    texture_table_t *texture_table;
 } game_state_t;
 
 
