@@ -19,9 +19,9 @@ int main(int argument_counter, char **arguments) {
     state->tilemap = tilemap_create(state->renderer, MAP_WIDTH, MAP_HEIGTH, TILE_SIZE, 3);
     tilemap_load_layer(state->tilemap, ground_tiles, sizeof(ground_tiles), LAYER_GROUND);
     tilemap_load_layer(state->tilemap, object_tiles, sizeof(object_tiles), LAYER_OBJECT);
-    tilemap_get_collision_list(state->physics_state, state->tilemap, LAYER_OBJECT);
 
     player_t *player = create_player(24, 300.0, 300.0, COLOR_YELLOW);
+    tilemap_get_collision_list(state->physics_state, state->tilemap, &player->body, LAYER_OBJECT);
 
     physics_add_body(state->physics_state, &(player->body));
 
@@ -60,12 +60,11 @@ int main(int argument_counter, char **arguments) {
         physics_update(state->physics_state, state->clock->dt, PLAYER_SPEED, aabb_collision_list);
 
         //Rendering
+        update_camera(state->camera, player->body.aabb.position);
         clear_render(state->renderer, get_color(COLOR_DARK_GRAY));
-        render_tilemap(state->renderer, state->tilemap, tilemap_texture_sheet);
-        // render_aabb_list(state->renderer, state->physics_state->tile_aabb_list, COLOR_OFFWHITE);
-        t_render_player(player, state->renderer);
-        // render_body_list(state->renderer, state->physics_state->body_list, COLOR_WHITE);
-        render_aabb_list(state->renderer, aabb_collision_list, COLOR_RED);  
+        render_tilemap(state->renderer, state->camera, state->tilemap, tilemap_texture_sheet);
+        t_render_player(state->renderer, state->camera, player);
+        render_aabb_list(state->renderer, state->camera, aabb_collision_list, COLOR_RED);  
         
         array_list_clear(aabb_collision_list);
 

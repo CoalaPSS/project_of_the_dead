@@ -21,7 +21,8 @@ enum TILE_ID {
     TILE_STONE_PATH_ID,
     TILE_STONE_WALL_ID,
     TILE_BOX_ID, 
-    TILE_RED_BOX
+    TILE_RED_BOX,
+    TILE_PLAYER_POS
 };
 
 enum TILEMAP_LAYERS {
@@ -56,5 +57,5 @@ tilemap_t *tilemap_create(SDL_Renderer *renderer, u32 width, u32 height, u32 til
 void tilemap_load_layer(tilemap_t *map, const u16 *tiles, usize tile_array_size, int layer_id);
 void set_tile(tilemap_t *map, u32 x, u32 y, u16 id, int layer);
 u16 get_tile(tilemap_t *map, u32 x, u32 y, int layer);
-void tilemap_get_collision_list(physics_state_t *p_state, tilemap_t *map, int layer);
-void render_tilemap(SDL_Renderer *renderer, tilemap_t *tilemap, texture_sheet_t *sheet);
+void tilemap_get_collision_list(physics_state_t *p_state, tilemap_t *map, body_t *pb, int layer);
+void render_tilemap(SDL_Renderer *renderer, camera_t *camera, tilemap_t *tilemap, texture_sheet_t *sheet);

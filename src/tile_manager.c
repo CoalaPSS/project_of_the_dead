@@ -3,8 +3,8 @@
 
 
 void init_tileinfo_table(SDL_Renderer *renderer, tileinfo_t *table) {
-    table[TILE_GRASS_ID] = (tileinfo_t){true, 0.0, 0, 0, COLOR_MOSS_GREEN};
-    table[TILE_ROCK_WALL_ID] = (tileinfo_t){true, 0.0, 0, 0, COLOR_DARK_GRAY};
+    table[TILE_GRASS_ID] = (tileinfo_t){true, 0.0, 0, 1, COLOR_MOSS_GREEN};
+    table[TILE_ROCK_WALL_ID] = (tileinfo_t){true, 0.0, 2, 0, COLOR_DARK_GRAY};
     table[TILE_DIRT_ID] = (tileinfo_t){true, 0.5, 0, 0, COLOR_BROWN};
     table[TILE_BUSH_ID] = (tileinfo_t){false, 0.0, 0, 0, COLOR_GREEN};
     table[TILE_TREE_ID] = (tileinfo_t){true, 0.0, 0, 0, COLOR_DARK_GREEN};
@@ -74,7 +74,7 @@ u16 get_tile(tilemap_t *map, u32 x, u32 y, int layer) {
     }
 }
 
-void tilemap_get_collision_list(physics_state_t *p_state, tilemap_t *map, int layer) {
+void tilemap_get_collision_list(physics_state_t *p_state, tilemap_t *map, body_t *pb, int layer) {
     aabb_t tile_aabb;
     tile_aabb.half_size = vec2_from_int(map->tile_size, 0.5);
 
@@ -84,7 +84,12 @@ void tilemap_get_collision_list(physics_state_t *p_state, tilemap_t *map, int la
         for (int x = 0; x < map->width; x++) {
 
             id = get_tile(map, x, y, layer);
-            
+
+            if (id == TILE_PLAYER_POS) {
+                pb->aabb.position = (vec2_t){(f32)x + map->tile_size/2, (f32)y + map->tile_size/2};
+                continue;
+            }
+
             if (map->tileinfo_table[id].solid) {
                 vec2_t relative_pos = (vec2_t){(f32)(x * map->tile_size), (f32)(y * map->tile_size)};
                 tile_aabb.position = vec2_add(relative_pos, tile_aabb.half_size);
@@ -95,7 +100,7 @@ void tilemap_get_collision_list(physics_state_t *p_state, tilemap_t *map, int la
     }
 }
 
-void render_tilemap(SDL_Renderer *renderer, tilemap_t *tilemap, texture_sheet_t *sheet) {
+void render_tilemap(SDL_Renderer *renderer, camera_t *camera, tilemap_t *tilemap, texture_sheet_t *sheet) {
     vec2_t render_pos;
     vec2_t tile_hs = vec2_from_int(tilemap->tile_size, 0.5);
     
@@ -113,10 +118,11 @@ void render_tilemap(SDL_Renderer *renderer, tilemap_t *tilemap, texture_sheet_t 
             index = (y * tilemap->width) + x;
 
             u16 id = tilemap->layers[LAYER_GROUND][index];
+            u16 texture_id = tilemap->tileinfo_table[id].texture_id;
 
             if (id == TILE_EMPTY) continue;
 
-            render_texture_frame(renderer, sheet, (x*tilemap->tile_size), (y*tilemap->tile_size), id, tilemap->tile_size);
+            render_texture_frame(renderer, camera, sheet, (x*tilemap->tile_size), (y*tilemap->tile_size), texture_id, tilemap->tile_size);
         }
     }
     // Draw object layer
@@ -129,7 +135,7 @@ void render_tilemap(SDL_Renderer *renderer, tilemap_t *tilemap, texture_sheet_t 
 
             if (id == TILE_EMPTY) continue;
 
-            render_texture_frame(renderer, sheet, (x*tilemap->tile_size), (y*tilemap->tile_size), id, tilemap->tile_size);
+            render_texture_frame(renderer, camera, sheet, (x*tilemap->tile_size), (y*tilemap->tile_size), id, tilemap->tile_size);
         }
     }
 }

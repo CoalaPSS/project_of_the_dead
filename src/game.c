@@ -17,6 +17,7 @@ game_state_t *init_game(const int sw, const int sh, const int fps) {
     game_instance->clock = init_clock(fps);
     game_instance->input = init_input_state();
     game_instance->physics_state = init_physics_state(NULL, tile_collision_callback);
+    game_instance->camera = create_camera((u32)sw, (u32)sh);
 
     init_color_chart();
 
@@ -74,18 +75,13 @@ player_t *create_player(u32 size, f32 x_pos, f32 y_pos, u8 color_id) {
     player->color_id = color_id;
 }
 
-void update_player_movement(player_t *player, f32 delta_time) {
-    f32 df = 0.0;
-    if (player->body.velocity.x && player->body.velocity.y) df = 0.7;
-
-    player->body.aabb.position.x += player->body.velocity.x * delta_time;
-    player->body.aabb.position.y += player->body.velocity.y * delta_time;
-}
-
-void t_render_player(player_t *player, SDL_Renderer *renderer) {
+void t_render_player(SDL_Renderer *renderer, camera_t *camera, player_t *player) {
     SDL_Rect rect;
 
     aabb_to_sdl_rect(player->body.aabb, &rect);
+
+    rect.x -= (camera->position.x - camera->width/2);
+    rect.y -= (camera->position.y - camera->height/2);
 
     set_render_color(renderer, get_color(player->color_id));
     SDL_RenderFillRect(renderer, &rect);
@@ -118,7 +114,7 @@ const u16 object_tiles[] = {
     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
     0, 0, 0, 0, 0, 2, 2, 2, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
     0, 0, 0, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-    0, 0, 0, 0, 0, 2, 2, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 2, 2, 0, 2, 0, 0, 0, TILE_PLAYER_POS, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
     0, 0, 0, 0, 0, 0, 2, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
     0, 0, 0, 0, 0, 0, 2, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
     0, 0, 0, 0, 0, 0, 2, 0, 2, 2, 2, 0, 2, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,

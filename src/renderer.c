@@ -18,6 +18,18 @@ void init_color_chart() {
     color_chart[COLOR_BROWN] = (color_t){105, 55, 10};
 }
 
+camera_t *create_camera(u32 width, u32 height) {
+    camera_t *camera = (camera_t*)malloc(sizeof(camera_t));
+    camera->width = width;
+    camera->height = height;
+
+    return camera;
+}
+
+void update_camera(camera_t *camera, vec2_t position) {
+    camera->position = position;
+}
+
 color_t get_color(enum COLOR_ID color_id) {
     return color_chart[color_id];
 }
@@ -31,34 +43,37 @@ void clear_render(SDL_Renderer *renderer, color_t color) {
     SDL_RenderClear(renderer);
 }
 
-void render_aabb(SDL_Renderer *renderer, aabb_t box, u8 color_id) {
+void render_aabb(SDL_Renderer *renderer, camera_t *camera, aabb_t box, u8 color_id) {
     SDL_Rect rect;
 
     aabb_to_sdl_rect(box, &rect);
+    rect.x -= (int)(camera->position.x - camera->width/2);
+    rect.y -= (int)(camera->position.y - camera->height/2);
+
     set_render_color(renderer, get_color(color_id));
     SDL_RenderDrawRect(renderer, &rect);
 }
 
-void render_aabb_list(SDL_Renderer *renderer, array_list_t *aabb_list, u8 color_id) {
+void render_aabb_list(SDL_Renderer *renderer, camera_t *camera, array_list_t *aabb_list, u8 color_id) {
     for (int i = 0; i < aabb_list->lenght; i++) {
         aabb_t *aabb = (aabb_t*)array_list_get(aabb_list, i);
 
-        render_aabb(renderer, *(aabb), color_id);
+        render_aabb(renderer, camera, *(aabb), color_id);
     }
 }
 
-void render_body_list(SDL_Renderer *renderer, array_list_t *body_list, u8 color_id) {
+void render_body_list(SDL_Renderer *renderer, camera_t *camera, array_list_t *body_list, u8 color_id) {
     for (int i = 0; i < body_list->lenght; i++) {
         body_t *b = *(body_t**)array_list_get(body_list, i);
         // dbg_print_body_pos(b);
-        render_aabb(renderer, b->aabb, color_id);
+        render_aabb(renderer, camera, b->aabb, color_id);
     }
 }
 
-void render_quad(SDL_Renderer *renderer, vec2_t position, u32 size, u8 color_id) {
+void render_quad(SDL_Renderer *renderer, camera_t *camera, vec2_t position, u32 size, u8 color_id) {
     SDL_Rect rect = {
-        .x = position.x,
-        .y = position.y,
+        .x = position.x - (camera->position.x - camera->width/2),
+        .y = position.y - (camera->position.y - camera->height/2),
         .w = size,
         .h = size,
     };
@@ -66,7 +81,7 @@ void render_quad(SDL_Renderer *renderer, vec2_t position, u32 size, u8 color_id)
     SDL_RenderDrawRect(renderer, &rect);
 }
 
-void render_texture_frame(SDL_Renderer *renderer, texture_sheet_t *sheet, u32 x, u32 y, int id, u32 dst_size) {
+void render_texture_frame(SDL_Renderer *renderer, camera_t *camera, texture_sheet_t *sheet, u32 x, u32 y, int id, u32 dst_size) {
     SDL_Rect src, dst;
 
     src.x = (id % sheet->cols) * sheet->frame_size;
@@ -74,8 +89,8 @@ void render_texture_frame(SDL_Renderer *renderer, texture_sheet_t *sheet, u32 x,
     src.w = sheet->frame_size;
     src.h = sheet->frame_size;
 
-    dst.x = x;
-    dst.y = y;
+    dst.x = x - (camera->position.x - camera->width/2);
+    dst.y = y - (camera->position.y - camera->height/2);
     dst.w = dst_size;
     dst.h = dst_size;
 
