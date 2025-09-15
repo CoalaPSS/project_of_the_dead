@@ -1,5 +1,7 @@
 #include "../include/physics.h"
 
+physics_state_t g_physics_state;
+
 void aabb_to_sdl_rect(aabb_t aabb, SDL_Rect *rect) {
     vec2_t relative_pos = vec2_sub(aabb.position, aabb.half_size);
     vec2_t size = vec2_mult(aabb.half_size, 2.0);
@@ -62,92 +64,86 @@ bool aabb_penetration_vector(vec2_t *r, aabb_t box_a, aabb_t box_b) {
 }
 
 
-void physics_add_body(physics_state_t *state, body_t *body) {
-    array_list_append(state->body_list, &body);
+void physics_add_body(body_t *body) {
+    array_list_append(g_physics_state.body_list, &body);
 }
 
-
-void physics_collision_update(physics_state_t *state) {
+void physics_collision_update(AXIS axis) {
     collision_event_t col_event;
 
-    for (int i = 0; i < state->body_list->lenght; i++) {
-        body_t *body = *(body_t**)array_list_get(state->body_list, i);
+    for (int i = 0; i < g_physics_state.body_list->lenght; i++) {
+        body_t *body = *(body_t**)array_list_get(g_physics_state.body_list, i);
 
-        for (int j = 0; j < state->tile_aabb_list->lenght; ++j) {
-            aabb_t tile_aabb = *(aabb_t*)array_list_get(state->tile_aabb_list, j);
+        for (int j = 0; j < g_physics_state.static_body_list->lenght; ++j) {
+            aabb_t *static_body = (aabb_t*)array_list_get(g_physics_state.static_body_list, j);
 
-            if (!physics_aabb_aabb_intersect(body->aabb, tile_aabb)) continue;
+            if (!physics_aabb_aabb_intersect(body->aabb, *(static_body))) continue;
 
-            col_event.type = COLLISION_BODY_TILE;
-            col_event.body_01 = body;
-            col_event.body_02 = NULL;
-            col_event.tile_aabb = tile_aabb;
-            array_list_append(state->collision_list, &col_event);
+            col_event.type = COLLISION_STATIC_BODY;
+            col_event.self = body;
+            col_event.other.static_body = static_body;
+            array_list_append(g_physics_state.collision_list, &col_event);
 
-            vec2_t mtv;
-            if (!aabb_penetration_vector(&mtv, body->aabb, tile_aabb)) continue;
+            vec2_t penetration_vector = {0, 0};
 
-            if (mtv.x != 0.0f) {
-                body->aabb.position.x += mtv.x;                
-                body->velocity.x = 0.0f;
+            aabb_penetration_vector(&penetration_vector, body->aabb, *(static_body));
+
+            if (axis == X_AXIS) {
+                body->aabb.position.x += penetration_vector.x;
+                body->velocity.x = 0.0;
             }
-        }
-
-        for (int j = 0; j < state->tile_aabb_list->lenght; ++j) {
-            aabb_t tile_aabb = *(aabb_t*)array_list_get(state->tile_aabb_list, j);
-
-            if (!physics_aabb_aabb_intersect(body->aabb, tile_aabb)) continue;
-            vec2_t mtv;
-            if (!aabb_penetration_vector(&mtv, body->aabb, tile_aabb)) continue;
-
             
-            if (mtv.y != 0.0f) {
-                body->aabb.position.y += mtv.y;
-                body->velocity.y = 0.0f;
+            else if (axis == Y_AXIS) {
+                body->aabb.position.y += penetration_vector.y;
+                body->velocity.y = 0.0;
             }
         }
     }
-
 }
 
-void physics_collision_cb(physics_state_t *state, void *context) {
-    for (int i = 0; i < state->collision_list->lenght; i++) {
-        collision_event_t event = *(collision_event_t*)array_list_get(state->collision_list, i);
+void physics_collision_cb(void *context) {
+    for (int i = 0; i < g_physics_state.collision_list->lenght; i++) {
+        collision_event_t event = *(collision_event_t*)array_list_get(g_physics_state.collision_list, i);
 
-        if (event.type == COLLISION_BODY_TILE) {
-            state->tile_collision_callback(event.body_01, event.tile_aabb, context);
+        if (event.type == COLLISION_STATIC_BODY) {
+            event.self->on_hit_static(event.self, event.other.static_body, context);
+        }
+        else if (event.type == COLLISION_BODY) {
+            event.self->on_hit(event.self, event.other.body, NULL);
         }
     }
-    array_list_clear(state->collision_list);
+
+    array_list_clear(g_physics_state.collision_list);
 }
 
-void physics_update(physics_state_t *state, f32 dt, f32 speed, void *context) {
-    for (int i = 0; i < state->body_list->lenght; i++) {
-        body_t *body = *(body_t**)array_list_get(state->body_list, i);
+void physics_update_movement(f32 dt, f32 speed, AXIS axis) {
+    for (int i = 0; i < g_physics_state.body_list->lenght; i++) {
+    body_t *body = *(body_t**)array_list_get(g_physics_state.body_list, i);
 
-        body->velocity = vec2_normalize(body->velocity);
-        body->velocity = vec2_mult(body->velocity, speed);
+    body->velocity = vec2_normalize(body->velocity);
+    body->velocity = vec2_mult(body->velocity, speed);
 
+    if (axis == X_AXIS)
         body->aabb.position.x += body->velocity.x * dt;
+
+    else if (axis == Y_AXIS)
         body->aabb.position.y += body->velocity.y * dt;
     }
-
-    physics_collision_update(state);
-    physics_collision_cb(state, context);
-
 }
 
-physics_state_t *init_physics_state(body_collision_cb body_cb, tile_collision_cb tile_cb) { 
-    physics_state_t *state = (physics_state_t*)malloc(sizeof(physics_state_t));
+void physics_update(f32 dt, f32 speed, void *context) {
+    physics_update_movement(dt, speed, X_AXIS);
+    physics_collision_update(X_AXIS);
+    physics_update_movement(dt, speed, Y_AXIS);
+    physics_collision_update(Y_AXIS);
 
-    state->body_collision_callback = body_cb;
-    state->tile_collision_callback = tile_cb;
+    physics_collision_cb(context);
+}
 
-    state->body_list = array_list_create(sizeof(body_t*), DEFAULT_INITIAL_CAPACITY);
-    state->tile_aabb_list = array_list_create(sizeof(aabb_t), DEFAULT_INITIAL_CAPACITY);
-    state->collision_list = array_list_create(sizeof(collision_event_t), COLLISION_LIST_CAPACITY);
-
-    return state;
+void physics_init() { 
+    g_physics_state.body_list = array_list_create(sizeof(body_t*), DEFAULT_INITIAL_CAPACITY);
+    g_physics_state.static_body_list = array_list_create(sizeof(aabb_t), DEFAULT_INITIAL_CAPACITY);
+    g_physics_state.collision_list = array_list_create(sizeof(collision_event_t), COLLISION_LIST_CAPACITY);
 }
 
 void dbg_print_body_pos(void *data) {
@@ -156,19 +152,19 @@ void dbg_print_body_pos(void *data) {
 }
 
 void dbg_print_tile_pos(void *data) {
-    aabb_t *tile_aabb = (aabb_t*)data;
+    aabb_t *static_body = (aabb_t*)data;
 
-    printf("Position: [%f, %f]\n", tile_aabb->position.x, tile_aabb->position.y);
+    printf("Position: [%f, %f]\n", static_body->position.x, static_body->position.y);
 }
 
-void dbg_print_physics_state(physics_state_t *state) {
+void dbg_print_physics_state() {
     printf("Body List:\n\n");
-    dbg_print_array_list(state->body_list, dbg_print_body_pos);
+    dbg_print_array_list(g_physics_state.body_list, dbg_print_body_pos);
 
     printf("\n\n\n");
 
     printf("Tile AABB List:\n\n");
-    dbg_print_array_list(state->tile_aabb_list, dbg_print_tile_pos);
+    dbg_print_array_list(g_physics_state.static_body_list, dbg_print_tile_pos);
 }
 
 

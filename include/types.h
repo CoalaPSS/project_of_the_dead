@@ -1,6 +1,7 @@
 #pragma once
 
 #include <stdint.h>
+#include <stdbool.h>
 
 typedef int8_t i8;
 typedef int32_t i32;

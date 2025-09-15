@@ -2,7 +2,7 @@
 
 
 
-void init_tileinfo_table(SDL_Renderer *renderer, tileinfo_t *table) {
+void init_tileinfo_table(tileinfo_t *table) {
     table[TILE_GRASS_ID] = (tileinfo_t){true, 0.0, 0, 1, COLOR_MOSS_GREEN};
     table[TILE_ROCK_WALL_ID] = (tileinfo_t){true, 0.0, 2, 0, COLOR_DARK_GRAY};
     table[TILE_DIRT_ID] = (tileinfo_t){true, 0.5, 0, 0, COLOR_BROWN};
@@ -22,9 +22,7 @@ vec2_t absolute_pos(u32 x, u32 y, u32 size) {
     return position;
 }
 
-tilemap_t *tilemap_create(SDL_Renderer *renderer, u32 width, u32 height, u32 tile_size, int layer_count) {
-    tilemap_t *map = (tilemap_t*)malloc(sizeof(tilemap_t));
-
+void tilemap_init(tilemap_t *map, u32 width, u32 height, u32 tile_size, int layer_count) {
     map->width = width;
     map->height = height;
     map->tile_size = tile_size;
@@ -37,9 +35,7 @@ tilemap_t *tilemap_create(SDL_Renderer *renderer, u32 width, u32 height, u32 til
     }
 
     map->tileinfo_table = (tileinfo_t*)malloc((usize)TILEINFO_TABLE_SIZE);
-    init_tileinfo_table(renderer, map->tileinfo_table);
-
-    return map;
+    init_tileinfo_table(map->tileinfo_table);
 }
 
 void tilemap_load_layer(tilemap_t *map, const u16 *tiles, usize tile_array_size, int layer_id) {
@@ -74,7 +70,7 @@ u16 get_tile(tilemap_t *map, u32 x, u32 y, int layer) {
     }
 }
 
-void tilemap_get_collision_list(physics_state_t *p_state, tilemap_t *map, body_t *pb, int layer) {
+void tilemap_get_collision_list(tilemap_t *map, int layer) {
     aabb_t tile_aabb;
     tile_aabb.half_size = vec2_from_int(map->tile_size, 0.5);
 
@@ -85,22 +81,17 @@ void tilemap_get_collision_list(physics_state_t *p_state, tilemap_t *map, body_t
 
             id = get_tile(map, x, y, layer);
 
-            if (id == TILE_PLAYER_POS) {
-                pb->aabb.position = (vec2_t){(f32)x + map->tile_size/2, (f32)y + map->tile_size/2};
-                continue;
-            }
-
             if (map->tileinfo_table[id].solid) {
                 vec2_t relative_pos = (vec2_t){(f32)(x * map->tile_size), (f32)(y * map->tile_size)};
                 tile_aabb.position = vec2_add(relative_pos, tile_aabb.half_size);
 
-                array_list_append(p_state->tile_aabb_list, &tile_aabb);
+                array_list_append(g_physics_state.static_body_list, &tile_aabb);
             }
         }
     }
 }
 
-void render_tilemap(SDL_Renderer *renderer, camera_t *camera, tilemap_t *tilemap, texture_sheet_t *sheet) {
+void render_tilemap(tilemap_t *tilemap, texture_sheet_t *sheet) {
     vec2_t render_pos;
     vec2_t tile_hs = vec2_from_int(tilemap->tile_size, 0.5);
     
@@ -122,7 +113,7 @@ void render_tilemap(SDL_Renderer *renderer, camera_t *camera, tilemap_t *tilemap
 
             if (id == TILE_EMPTY) continue;
 
-            render_texture_frame(renderer, camera, sheet, (x*tilemap->tile_size), (y*tilemap->tile_size), texture_id, tilemap->tile_size);
+            render_texture_frame(sheet, (x*tilemap->tile_size), (y*tilemap->tile_size), texture_id, tilemap->tile_size);
         }
     }
     // Draw object layer
@@ -135,7 +126,7 @@ void render_tilemap(SDL_Renderer *renderer, camera_t *camera, tilemap_t *tilemap
 
             if (id == TILE_EMPTY) continue;
 
-            render_texture_frame(renderer, camera, sheet, (x*tilemap->tile_size), (y*tilemap->tile_size), id, tilemap->tile_size);
+            render_texture_frame(sheet, (x*tilemap->tile_size), (y*tilemap->tile_size), id, tilemap->tile_size);
         }
     }
 }

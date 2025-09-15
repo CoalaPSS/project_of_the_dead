@@ -25,31 +25,41 @@ enum COLOR_ID {
     COLOR_BROWN
 };
 
-typedef struct _camera {
+typedef struct _viewport viewport_t;
+typedef struct _texture_sheet texture_sheet_t;
+typedef struct _render_state render_state_t;
+
+struct _viewport {
     vec2_t position;
     u32 width;
     u32 height;
-} camera_t;
+};
 
-typedef struct _texture_sheet {
+struct _texture_sheet {
     SDL_Texture *texture;
     int frame_size;
     int cols;
     int rows;
-} texture_sheet_t;
+};
+
+struct _render_state {
+    SDL_Renderer *renderer;
+    viewport_t viewport;
+};
 
 extern color_t color_chart[];
+extern render_state_t g_render_state;
 
-void update_camera(camera_t *camera, vec2_t position);
-camera_t *create_camera(u32 width, u32 height);
-void clear_render(SDL_Renderer *renderer, color_t color);
-void set_render_color(SDL_Renderer *renderer, color_t color);
-void render_quad(SDL_Renderer *renderer, camera_t *camera, vec2_t position, u32 size, u8 color_id);
-void render_aabb(SDL_Renderer *renderer, camera_t *camera, aabb_t box, u8 color_id);
-void render_aabb_list(SDL_Renderer *renderer, camera_t *camera, array_list_t *aabb_list, u8 color_id);
-void render_body_list(SDL_Renderer *renderer, camera_t *camera, array_list_t *body_list, u8 color_id);
-void render_texture_frame(SDL_Renderer *renderer, camera_t *camera, texture_sheet_t *sheet, u32 x, u32 y, int id, u32 dst_size);
-texture_sheet_t *render_load_texture_sheet(SDL_Renderer *renderer, char *path, u32 frame_size, int width, int height);
+void render_init(SDL_Renderer *renderer, const u32 screen_width, const u32 screen_height);
+void update_camera(vec2_t position);
+void clear_render(color_t color);
+void set_render_color(color_t color);
+void render_quad(vec2_t position, u32 size, u8 color_id);
+void render_aabb(aabb_t *box, u8 color_id);
+void render_aabb_list(array_list_t *aabb_list, u8 color_id);
+void render_body_list(array_list_t *body_list, u8 color_id);
+void render_texture_frame(texture_sheet_t *sheet, u32 x, u32 y, int id, u32 dst_size);
+texture_sheet_t *render_load_texture_sheet(char *path, u32 frame_size, int width, int height);
 
 void init_color_chart();
 color_t get_color(enum COLOR_ID color_id);

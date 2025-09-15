@@ -19,30 +19,19 @@
 
 extern const u16 ground_tiles[MAP_WIDTH * MAP_HEIGTH];
 extern const u16 object_tiles[MAP_WIDTH * MAP_HEIGTH];
+typedef struct _game game_t;
 
-typedef struct _player {
-    body_t body;
-
-    SDL_Texture *sprite_texture;
-    u8 color_id;
-} player_t;
-
-typedef struct _game {
-    int screen_width, screen_height; 
+struct _game {
+    int screen_width;
+    int screen_height; 
 
     clock_t *clock;
     SDL_Window *window;
-    SDL_Renderer *renderer;
-    camera_t *camera;
     input_state_t *input;
     bool running;
+};
 
-    physics_state_t *physics_state;
-    tilemap_t *tilemap;
-} game_state_t;
+extern game_t g_state;
 
-
-game_state_t *init_game(const int sw, const int sh, const int fps);
-player_t *create_player(u32 size, f32 x_pos, f32 y_pos, u8 color_id);
-void process_key_presses(key_states_t *key_states, player_t *player, bool debug_flag);
-void t_render_player(SDL_Renderer *renderer, camera_t *camera, player_t *player);
+void init_game(const int sw, const int sh, const int fps);
+void process_key_presses(key_states_t *key_states, body_t *player_body, bool debug_flag);

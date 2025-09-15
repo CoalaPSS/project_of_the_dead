@@ -1,90 +1,50 @@
 #include "../include/game.h"
 
-void tile_collision_callback(body_t *body, aabb_t tile_aabb, void *context);
+game_t g_state;
 
-game_state_t *init_game(const int sw, const int sh, const int fps) {
+void init_game(const int sw, const int sh, const int fps) {
     SDL_Init(SDL_INIT_VIDEO);
     if (!(IMG_Init(IMG_INIT_PNG))) {
         // Se a inicialização falhar, imprima um erro.
         printf("Erro ao inicializar SDL_image: %s\n", IMG_GetError());
     }
 
-    game_state_t *game_instance = (game_state_t *)malloc(sizeof(game_state_t));
+    g_state.window = SDL_CreateWindow("ProtGame-Z", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, sw, sh, SDL_WINDOW_SHOWN);
+    g_state.clock = init_clock(fps);
+    g_state.input = init_input_state();
+    g_state.running = true;
 
-    game_instance->window = SDL_CreateWindow("ProtGame-Z", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, sw, sh, SDL_WINDOW_SHOWN);
-    game_instance->renderer = SDL_CreateRenderer(game_instance->window, -1, SDL_RENDERER_ACCELERATED);
+    SDL_Renderer *renderer = SDL_CreateRenderer(g_state.window, -1, SDL_RENDERER_ACCELERATED);
 
-    game_instance->clock = init_clock(fps);
-    game_instance->input = init_input_state();
-    game_instance->physics_state = init_physics_state(NULL, tile_collision_callback);
-    game_instance->camera = create_camera((u32)sw, (u32)sh);
-
-    init_color_chart();
-
-    game_instance->running = true;
-
-    return game_instance;
+    render_init(renderer, sw, sh);
+    physics_init();
 }
 
 
-void process_key_presses(key_states_t *key_states, player_t *player, bool debug_flag) {
-    player->body.velocity.x = 0;
-    player->body.velocity.y = 0;
+void process_key_presses(key_states_t *key_states, body_t *player_body, bool debug_flag) {
+    player_body->velocity.x = 0;
+    player_body->velocity.y = 0;
 
     //KEY DOWN
     if (key_states->left == KEY_DOWN) {
-        player->body.velocity.x = -PLAYER_SPEED;
+        player_body->velocity.x = -PLAYER_SPEED;
     }
 
     if (key_states->right == KEY_DOWN) {
-        player->body.velocity.x = PLAYER_SPEED;
+        player_body->velocity.x = PLAYER_SPEED;
     }
 
     if (key_states->up == KEY_DOWN) {
-        player->body.velocity.y = -PLAYER_SPEED;
+        player_body->velocity.y = -PLAYER_SPEED;
     }
 
     if (key_states->down == KEY_DOWN) {
-        player->body.velocity.y = PLAYER_SPEED;
+        player_body->velocity.y = PLAYER_SPEED;
     }
 
     if (debug_flag) {
         print_key_states(*key_states);
     }
-}
-
-void tile_collision_callback(body_t *body, aabb_t tile_aabb, void *context) {
-    if (body->id == ID_PLAYER) {
-        array_list_t *aabb_list = (array_list_t*)context;
-        
-        array_list_append(aabb_list, &body->aabb);
-        array_list_append(aabb_list, &tile_aabb);
-    }
-}
-
-player_t *create_player(u32 size, f32 x_pos, f32 y_pos, u8 color_id) {
-    player_t *player = (player_t*)malloc(sizeof(player_t));
-
-    player->body.aabb.half_size = (vec2_t){.x = (f32)size/2.0, .y = (f32)size/2.0};
-    player->body.aabb.position = (vec2_t){.x = x_pos, .y = y_pos};
-    player->body.velocity = (vec2_t){0};
-    player->body.acceleration = (vec2_t){0};
-    player->body.id = ID_PLAYER;
-    player->body.owner = player;
-
-    player->color_id = color_id;
-}
-
-void t_render_player(SDL_Renderer *renderer, camera_t *camera, player_t *player) {
-    SDL_Rect rect;
-
-    aabb_to_sdl_rect(player->body.aabb, &rect);
-
-    rect.x -= (camera->position.x - camera->width/2);
-    rect.y -= (camera->position.y - camera->height/2);
-
-    set_render_color(renderer, get_color(player->color_id));
-    SDL_RenderFillRect(renderer, &rect);
 }
 
 //Tile Map
